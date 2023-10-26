@@ -1,0 +1,24 @@
+## Interface: 30300
+## Title: DalaranAH
+## Notes: Creates Button to Target and Interact with the Dalaran-AH-Bot easier.
+## X-Localizations: enUS, enGB, deDE, ruRU, frFR, esES, esMX, zhCN, zhTW
+## Version: 1.0.0
+## Author: NoM0Re
+## DefaultState: enabled
+## SavedVariables: DalaranAH
+## X-Website: https://github.com/NoM0Re/DalaranAH
+
+libs.xml
+
+locales\enUS.lua
+locales\enGB.lua
+locales\deDE.lua
+locales\frFR.lua
+locales\esES.lua
+locales\esMX.lua
+locales\ruRU.lua
+locales\zhCN.lua
+locales\zhTW.lua
+
+
+Core.lua
