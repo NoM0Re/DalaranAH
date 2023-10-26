@@ -1,13 +1,11 @@
 # DalaranAH 3.3.5a
 
-<img src="https://i.ibb.co/s9D1LqG/Dalaran-AH.png" alt="Dalaran-AH" border="0">
+<img src="https://i.ibb.co/JKZmkjP/Dalaran-AH.png" alt="Dalaran-AH" border="0">
 
 **DalaranAH** is a lightweight World of Warcraft addon that simplifies interactions with the "Brassbolt Mechawrench" NPC in Dalaran by providing a customizable button on your screen, allowing you to target, set focus and mark the AH-Bot.<br/>
 Also it opens the Auctionhouse instant, instead of clicking manually on the Gossip.<br/>
 It also provides localization support for multiple languages and is accessible through various slash commands.<br/><br/>
-Addon created by NoM0Re
-
-
+Addon created by NoM0Re<br/>
 
 [![HitCount](https://hits.dwyl.com/NoM0Re/DalaranAH.svg?style=flat-square)](http://hits.dwyl.com/NoM0Re/DalaranAH) ![GitHub contributors](https://img.shields.io/github/contributors/NoM0Re/DalaranAH)
  ![GitHub issues](https://img.shields.io/github/issues/NoM0Re/DalaranAH)  ![GitHub last commit (branch)](https://img.shields.io/github/last-commit/NoM0Re/DalaranAH/main) <br/>
@@ -38,6 +36,6 @@ Addon created by NoM0Re
 # **Localisations:**
 The Addon needs Localisations in order to work.<br/><br/>
 **Currently Supported Clients are enUS, enGB, deDE, ruRU, frFR, esES, esMX, zhCN, zhTW**<br/>
-Help us localize ur Client Languague [here](https://github.com/NoM0Re/DalaranAH/pulls)<br/><br/><br/>
+Help me localize ur Client Languague [here](https://github.com/NoM0Re/DalaranAH/pulls)<br/><br/><br/>
 
 
