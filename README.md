@@ -1,8 +1,8 @@
 # DalaranAH 3.3.5a
 
-<img src="https://i.ibb.co/JKZmkjP/Dalaran-AH.png" alt="Dalaran-AH" border="0">
+<img src="https://i.ibb.co/WzPWxH1/Dalaran-AH2.png" alt="Dalaran-AH2" border="0"> <img src="https://i.ibb.co/JKZmkjP/Dalaran-AH.png" alt="Dalaran-AH" border="0"><br/>
 
-**DalaranAH** is a lightweight World of Warcraft addon that simplifies interactions with the "Brassbolt Mechawrench" NPC in Dalaran by providing a customizable button on your screen, allowing you to target, set focus and mark the AH-Bot.<br/>
+**DalaranAH** is a lightweight World of Warcraft addon that simplifies interactions with the Auctionhouse NPC in Dalaran by providing a customizable button on your screen, allowing you to target, set focus and mark the AH-Bot.<br/>
 Also it opens the Auctionhouse instant, instead of clicking manually on the Gossip.<br/>
 It also provides localization support for multiple languages and is accessible through various slash commands.<br/><br/>
 Addon created by NoM0Re<br/>
