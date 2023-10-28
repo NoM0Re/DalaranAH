@@ -1,12 +1,37 @@
+-- Libs
 local L = LibStub("AceLocale-3.0"):GetLocale("DalaranAH")
--- local variables
-local DalaranAHButton
-local DalaranAHBotModel
+
+-- WoW Api Functions
+local GetBinding = GetBinding
+local GetMinimapZoneText = GetMinimapZoneText
+local GetUnitName = GetUnitName
+local IsShiftKeyDown = IsShiftKeyDown
+local GetScreenWidth, GetScreenHeight = GetScreenWidth, GetScreenHeight
+local SelectGossipOption = SelectGossipOption
+local CreateFrame, GameTooltip = CreateFrame, GameTooltip
+local GetLocale = GetLocale
+
+-- local Variables
+local AHButton
+local BotModel
 local DalaranAHBotNPCID = 35594 -- AH NPC ID
 local ButtonSize
 local ButtonHalfSize
 
---Generate Binding Tooltips
+local function CheckEngineering()
+    return true --Needs to be included.
+end
+
+local function ZoneCheck()
+    return tostring(GetMinimapZoneText()) == L["Like Clockwork"]
+end
+
+-- Update Tooltip when Button Clicked
+local function UpdateTooltipOnClick()
+    if AHButton:GetScript("OnEnter") then AHButton:GetScript("OnEnter")(AHButton) end
+end
+
+-- Generate Binding Tooltips
 local function GenerateTooltips()
     local _, Bind1, Bind2 = GetBinding(116) -- INTERACTTARGET
     local _, mBind1, mBind2 = GetBinding(115) -- INTERACTMOUSEOVER
@@ -33,56 +58,47 @@ local function GenerateTooltips()
     return TooltipBind1, TooltipBind2
 end
 
--- Update Tooltip when Button Clicked
-local function UpdateTooltipOnClick()
-    if DalaranAHButton:GetScript("OnEnter") then DalaranAHButton:GetScript("OnEnter")(DalaranAHButton) end
-end
-
 -- Hide Button
-local function DalaranAHButtonHide()
-    local getcurrentZone = tostring(GetMinimapZoneText())
-    if getcurrentZone ~= L["Like Clockwork"] and DalaranAHButton then DalaranAHButton:Hide() end
+local function ButtonHide()
+    if not ZoneCheck() and AHButton then
+    AHButton:Hide()
+    end
 end
 
 -- Show Button
-local function DalaranAHButtonShow()
-    if DalaranAHButton then DalaranAHButton:Show() end
-    if DalaranAHBotModel then
-        DalaranAHBotModel:SetPosition(0, 0, 0)
-        DalaranAHBotModel:SetFacing(0)
-        DalaranAHBotModel:SetScale(1)
-        DalaranAHBotModel:SetCamera(0)
+local function ButtonShow()
+    if ZoneCheck() and AHButton and BotModel then
+        AHButton:Show()
+        BotModel:SetCreature(DalaranAHBotNPCID) -- in case model is not in cache
+        BotModel:SetCamera(0) -- has to be called again, because its PlayerModel
     end
 end
 
 -- Slashcommandhandler: Focus / Mark
-local function MacroText()
-    if DalaranAH.mark == true and DalaranAH.focus == true then
-        DalaranAHButton:SetAttribute("macrotext", "/tar " .. L["Brassbolt Mechawrench"] .. "\n/focus\n/run local GetTargetName = tostring(GetUnitName('target', 1)); if GetTargetName == '" .. L["Brassbolt Mechawrench"] .. "' then SetRaidTarget('target', 4) end")
-    elseif DalaranAH.mark == false and DalaranAH.focus == true then
-        DalaranAHButton:SetAttribute("macrotext", "/tar " .. L["Brassbolt Mechawrench"] .. "\n/focus")
-    elseif DalaranAH.mark == true and DalaranAH.focus == false then
-        DalaranAHButton:SetAttribute("macrotext", "/tar " .. L["Brassbolt Mechawrench"] .. "\n/run local GetTargetName = tostring(GetUnitName('target', 1)); if GetTargetName == '" .. L["Brassbolt Mechawrench"] .. "' then SetRaidTarget('target', 4) end")
-    elseif DalaranAH.mark == false and DalaranAH.focus == false then
-        DalaranAHButton:SetAttribute("macrotext", "/tar " .. L["Brassbolt Mechawrench"])
+local function setMacroText(mark, focus)
+    local macroText = "/tar " .. L["Brassbolt Mechawrench"]
+    if mark and focus then
+        macroText = macroText .. "\n/focus\n/run local GetTargetName = tostring(GetUnitName('target', 1)); if GetTargetName == '" .. L["Brassbolt Mechawrench"] .. "' then SetRaidTarget('target', 4) end"
+    elseif mark then
+        macroText = macroText .. "\n/run local GetTargetName = tostring(GetUnitName('target', 1)); if GetTargetName == '" .. L["Brassbolt Mechawrench"] .. "' then SetRaidTarget('target', 4) end"
+    elseif focus then
+        macroText = macroText .. "\n/focus"
     end
+    return macroText
 end
 
--- Create or Call Button and Model
-local function CreateCallDalaranAHButton()
-    -- Zone Check
-    local getcurrentZone = tostring(GetMinimapZoneText())
-    if getcurrentZone ~= L["Like Clockwork"] then return end
-    -- Call Button and Model then already exists
-    if DalaranAHButton then
-        DalaranAHButtonShow()
-        return
-    end
-
+local function constructButton()
     -- Create Button and Model
-    DalaranAHButton = CreateFrame("Button", "DalaranAHButton", UIParent, "SecureActionButtonTemplate")
-    DalaranAHButton:SetSize(ButtonSize, ButtonSize)
-    DalaranAHButton:SetBackdrop(
+    -- Button with Backdrop
+    AHButton = CreateFrame("Button", "AHButton", UIParent, "SecureActionButtonTemplate")
+    AHButton:Hide()
+    AHButton:SetSize(ButtonSize, ButtonSize)
+    AHButton:SetPoint("BOTTOMLEFT", DalaranAH.x, DalaranAH.y)
+    AHButton:SetFrameStrata("HIGH")
+    AHButton:SetFrameLevel(1)
+    AHButton:SetMovable(true)
+    AHButton:SetUserPlaced(true)
+    AHButton:SetBackdrop(
         {
             bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
             edgeFile = "Interface\\Tooltips\\UI-Tooltip-Background",
@@ -95,33 +111,29 @@ local function CreateCallDalaranAHButton()
             },
         }
     )
-
-    DalaranAHButton:SetBackdropColor(0, 0, 0, 0.7)
-    DalaranAHButton:SetBackdropBorderColor(0, 0, 0, 1)
-    DalaranAHButton:SetHighlightTexture(nil)
-    DalaranAHButton:SetPushedTexture(nil)
-    DalaranAHButton:SetPoint("BOTTOMLEFT", DalaranAH.x, DalaranAH.y)
-    DalaranAHButton:SetMovable(true)
-    DalaranAHButton:SetUserPlaced(true)
-    DalaranAHButton:SetFrameStrata("HIGH")
-    DalaranAHButton:SetFrameLevel(1)
-    DalaranAHButton:SetAttribute("type", "macro")
-    MacroText()
-    DalaranAHButton:SetScript(
+    AHButton:SetBackdropColor(0, 0, 0, 0.7)
+    AHButton:SetBackdropBorderColor(0, 0, 0, 1)
+    AHButton:SetHighlightTexture(nil)
+    AHButton:SetPushedTexture(nil)
+    AHButton:SetAttribute("type", "macro")
+    AHButton:SetAttribute("macrotext", setMacroText(DalaranAH.mark, DalaranAH.focus)) -- Call Function
+    AHButton:SetScript(
         "OnEnter",
         function(self)
             local Tooltip1, Tooltip2 = GenerateTooltips()
             local GetTargetName = tostring(GetUnitName("target", 1))
             if GetTargetName == L["Brassbolt Mechawrench"] then
-                GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
                 GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
                 GameTooltip:SetUnit("target")
                 GameTooltip:AddLine(" ", 1, 1, 1)
-                GameTooltip:AddLine("|cffffd100" .. Tooltip1 .. "|r", 1, 1, 1)
-                GameTooltip:AddLine("|cffffd100" .. Tooltip2 .. "|r", 1, 1, 1)
+                if Tooltip1 then
+                    GameTooltip:AddLine("|cffffd100" .. Tooltip1 .. "|r", 1, 1, 1)
+                end
+                if Tooltip2 then
+                    GameTooltip:AddLine("|cffffd100" .. Tooltip2 .. "|r", 1, 1, 1)
+                end
                 GameTooltip:Show()
             else
-                GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
                 GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
                 GameTooltip:SetText(L["Brassbolt Mechawrench"])
                 GameTooltip:AddLine("|cffffd100" .. L["Left-click to target"] .. "|r", 1, 1, 1)
@@ -130,9 +142,9 @@ local function CreateCallDalaranAHButton()
         end
     )
 
-    DalaranAHButton:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
-    DalaranAHButton:SetScript("OnMouseDown", function(self, button) if IsShiftKeyDown() and button == "LeftButton" then self:StartMoving() end end)
-    DalaranAHButton:SetScript("OnMouseUp",
+    AHButton:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
+    AHButton:SetScript("OnMouseDown", function(self, button) if IsShiftKeyDown() and button == "LeftButton" then self:StartMoving() end end)
+    AHButton:SetScript("OnMouseUp",
         function(self, button)
             if button == "LeftButton" then
                 self:StopMovingOrSizing()
@@ -143,33 +155,29 @@ local function CreateCallDalaranAHButton()
             UpdateTooltipOnClick()
         end
     )
+    AHButton:RegisterForClicks("AnyDown")
 
-    DalaranAHButton:RegisterForClicks("AnyDown")
     -- DalaranAHBot Model
-    DalaranAHBotModel = CreateFrame("PlayerModel", nil, DalaranAHButton)
-    DalaranAHBotModel:SetParent(DalaranAHButton)
-    DalaranAHBotModel:SetAllPoints("DalaranAHButton")
-    DalaranAHBotModel:SetFrameStrata("HIGH")
-    DalaranAHBotModel:SetFrameLevel(2)
-    DalaranAHBotModel:SetMovable(true)
-    DalaranAHBotModel:SetUserPlaced(true)
-    --DalaranAHBotModel:SetUnit("target")
-    DalaranAHBotModel:SetCreature(DalaranAHBotNPCID) -- Set AH NPC, out of Cache
-    DalaranAHBotModel:SetPosition(0, 0, 0)
-    DalaranAHBotModel:SetFacing(0)
-    DalaranAHBotModel:SetScale(1)
-    DalaranAHBotModel:SetCamera(0)
-    DalaranAHButtonShow()
+    BotModel = CreateFrame("PlayerModel", nil, AHButton)
+    BotModel:SetParent(AHButton) -- Needs debug if needed
+    BotModel:SetAllPoints("AHButton")
+    BotModel:SetFrameStrata("HIGH")
+    BotModel:SetFrameLevel(2)
+    BotModel:SetMovable(true)
+    BotModel:SetUserPlaced(true)
+    BotModel:SetCreature(DalaranAHBotNPCID) -- Set AH NPC, out of Cache
+    BotModel:SetCamera(0)
+    BotModel:SetScale(1)
+    BotModel:SetFacing(0)
 end
 
 -- Slashcommandhandler: Size
 local function RefreshButtonSize()
     ButtonSize = tonumber(DalaranAH.size)
     ButtonHalfSize = ButtonSize / 2
-    if DalaranAHButton and DalaranAHBotModel then
-        DalaranAHButton:SetSize(ButtonSize, ButtonSize)
-        DalaranAHBotModel:ClearAllPoints()
-        DalaranAHBotModel:SetAllPoints("DalaranAHButton")
+    if AHButton and BotModel then
+        AHButton:SetSize(ButtonSize, ButtonSize)
+        BotModel:SetAllPoints("AHButton")
     end
 end
 
@@ -177,39 +185,30 @@ end
 local function OnButtonPositionReset()
     local width, height = GetScreenWidth() / 2 - ButtonHalfSize, GetScreenHeight() / 2 - ButtonHalfSize
     DalaranAH.x, DalaranAH.y = width, height
-    if DalaranAHButton and DalaranAHBotModel then
-        DalaranAHButton:SetPoint("BOTTOMLEFT", DalaranAH.x, DalaranAH.y)
-        DalaranAHBotModel:ClearAllPoints()
-        DalaranAHBotModel:SetAllPoints("DalaranAHButton")
+    if AHButton then
+        AHButton:SetPoint("BOTTOMLEFT", DalaranAH.x, DalaranAH.y)
     end
 end
 
 -- Slashcommandhandler: Focus
 local function OnFocus()
-    if DalaranAH.focus == false then
-        DalaranAH.focus = true
-    elseif DalaranAH.focus == true then
-        DalaranAH.focus = false
+    DalaranAH.focus = not DalaranAH.focus -- Toggles on/off
+    if AHButton and BotModel then
+        AHButton:SetAttribute("macrotext", setMacroText(DalaranAH.mark, DalaranAH.focus))
     end
-
-    if DalaranAHButton and DalaranAHBotModel then MacroText() end
 end
 
 -- Slashcommandhandler: Mark
 local function OnMark()
-    if DalaranAH.mark == false then
-        DalaranAH.mark = true
-    elseif DalaranAH.mark == true then
-        DalaranAH.mark = false
+    DalaranAH.mark = not DalaranAH.mark -- Toggles on/off
+    if AHButton and BotModel then
+        AHButton:SetAttribute("macrotext", setMacroText(DalaranAH.mark, DalaranAH.focus))
     end
-
-    if DalaranAHButton and DalaranAHBotModel then MacroText() end
 end
 
 -- Open AH Selecting first Gossip on Interact
 local function OnGossipShow()
-    local getcurrentZone = tostring(GetMinimapZoneText())
-    if getcurrentZone ~= L["Like Clockwork"] then return end
+    if not ZoneCheck() then return end
     if GetUnitName("target") == L["Brassbolt Mechawrench"] then SelectGossipOption(1) end
 end
 
@@ -221,14 +220,14 @@ function DalaranAHCommandHandler(msg)
         local _, _, sizeValue = string.find(msg, L["size"] .. " (%d+)")
         if sizeValue then
             sizeValue = tonumber(sizeValue)
-            if sizeValue and sizeValue >= 10 and sizeValue <= 100 then
+            if sizeValue >= 10 and sizeValue <= 100 then
                 DalaranAH.size = sizeValue
                 RefreshButtonSize()
                 print(DAH .. L["Resized Button to "] .. DalaranAH.size .. L[" px"])
-            else
-                print(DAH .. "|cFFFFFF00" .. L["Invalid size."] .. "|r")
-                print("|cFFFFFF00  " .. L["size"] .. "|r - " .. L["Resize Button (min: 10, max: 100, default: 50)"])
             end
+        else
+            print(DAH .. "|cFFFFFF00" .. L["Invalid size."] .. "|r")
+            print("|cFFFFFF00  " .. L["size"] .. "|r - " .. L["Resize Button (min: 10, max: 100, default: 50)"])
         end
     elseif msg == L["reset"] then
         OnButtonPositionReset()
@@ -259,21 +258,35 @@ end
 local function LocaleWarning()
     local locale = tostring(GetLocale())
     if locale == "enUS" or locale == "enGB" or locale == "deDE" then
-        return
+        return true
     elseif locale == "ruRU" or locale == "zhCN" or locale == "zhTW" or locale == "frFR" or locale == "esES" or locale == "esMX" then
-        print("|cff33ff99DalaranAH > |r The localization of your client is incomplete, and the addon works but is mostly in English.")
+        print("|cff33ff99DalaranAH > |r The localization of your client is incomplete, the addon works but is mostly in English.")
         print("|cff33ff99DalaranAH > |r Help us complete your localization at: https://github.com/NoM0Re/DalaranAH")
+        return true
     else
-        print("|cff33ff99DalaranAH > |r Your client's localization is not supported, and the addon will not work with your language!")
+        print("|cff33ff99DalaranAH > |r Your client's localization is not supported, the addon will not work with your language!")
         print("|cff33ff99DalaranAH > |r Help us add support for your language at: https://github.com/NoM0Re/DalaranAH")
+        return false
     end
 end
+
+-- Register Events to Frames
+local indoor = CreateFrame("Frame")
+indoor:RegisterEvent("ZONE_CHANGED_INDOORS")
+indoor:SetScript("OnEvent", ButtonShow)
+
+local outdoor = CreateFrame("Frame")
+outdoor:RegisterEvent("ZONE_CHANGED")
+outdoor:SetScript("OnEvent", ButtonHide)
+
+local gossip = CreateFrame("Frame")
+gossip:RegisterEvent("GOSSIP_SHOW")
+gossip:SetScript("OnEvent", OnGossipShow)
 
 -- Init
 local function OnInit(frame, event)
     if event == "PLAYER_ENTERING_WORLD" then
         frame:UnregisterEvent("PLAYER_ENTERING_WORLD")
-        frame = nil
         local width, height
         if not DalaranAH then DalaranAH = {} end
         if DalaranAH.focus == nil then DalaranAH.focus = false end
@@ -286,24 +299,18 @@ local function OnInit(frame, event)
         SLASH_DALARANAH1 = "/dah"
         SLASH_DALARANAH2 = "/dalaranah"
         SlashCmdList["DALARANAH"] = DalaranAHCommandHandler
-        LocaleWarning()
-        CreateCallDalaranAHButton()
+        if LocaleWarning() and CheckEngineering() then
+            constructButton()
+            ButtonShow()
+        else
+            indoor:UnregisterAllEvents()
+            outdoor:UnregisterAllEvents()
+            gossip:UnregisterAllEvents()
+        end
     end
 end
 
--- Register Events to Frames
+-- Register Init Event
 local Init = CreateFrame("Frame")
 Init:RegisterEvent("PLAYER_ENTERING_WORLD")
 Init:SetScript("OnEvent", OnInit)
-
-local indoor = CreateFrame("FRAME")
-indoor:RegisterEvent("ZONE_CHANGED_INDOORS")
-indoor:SetScript("OnEvent", CreateCallDalaranAHButton)
-
-local outdoor = CreateFrame("FRAME")
-outdoor:RegisterEvent("ZONE_CHANGED")
-outdoor:SetScript("OnEvent", DalaranAHButtonHide)
-
-local gossip = CreateFrame("FRAME")
-gossip:RegisterEvent("GOSSIP_SHOW")
-gossip:SetScript("OnEvent", OnGossipShow)
