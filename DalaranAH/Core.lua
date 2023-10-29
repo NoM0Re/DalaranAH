@@ -262,7 +262,6 @@ function DalaranAHCommandHandler(msg)
                 RefreshButtonSize()
                 ChatPrint(string.format(DAH .. L["Resized Button to "] .. DalaranAH.size .. L[" px"]));
             end
-            return
         else
             ChatPrint(string.format(DAH .. "|cFFFFFF00" .. L["Invalid size."] .. "|r"));
             ChatPrint(string.format("|cFFFFFF00  " .. L["size"] .. "|r - " .. L["Resize Button (min: 10, max: 100, default: 50)"]));
