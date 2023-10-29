@@ -1,3 +1,25 @@
+-- *********************************************************
+-- **                      DalaranAH                      **
+-- **         https://github.com/NoM0Re/DalaranAH         **
+-- *********************************************************
+--
+-- This addon is written and copyrighted by:
+-- NoM0Re
+--
+-- The localizations are written by:
+--    * enGB/enUS: NoM0Re
+--    * deDE: NoM0Re
+--
+-- The code of this addon is licensed under a Creative Commons Attribution-Noncommercial-Share Alike 4.0 License.
+--
+--  You are free:
+--    * to Share - to copy, distribute, display, and perform the work
+--    * to Remix - to make derivative works
+--  Under the following conditions:
+--    * Attribution. You must attribute the work in the manner specified by the author or licensor (but not in any way that suggests that they endorse you or your use of the work).
+--    * Noncommercial. You may not use this work for commercial purposes.
+--    * Share Alike. If you alter, transform, or build upon this work, you may distribute the resulting work only under the same or similar license to this one.
+
 -- Libs
 local L = LibStub("AceLocale-3.0"):GetLocale("DalaranAH")
 
@@ -144,12 +166,12 @@ local function constructButton()
                     GameTooltip:AddLine("|cffffd100" .. Tooltip2 .. "|r", 1, 1, 1)
                 end
                 GameTooltip:Show()
-            else
+                return
+            end
                 GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
                 GameTooltip:SetText(L["Brassbolt Mechawrench"])
                 GameTooltip:AddLine("|cffffd100" .. L["Left-click to target"] .. "|r", 1, 1, 1)
                 GameTooltip:Show()
-            end
         end
     )
 
@@ -174,8 +196,6 @@ local function constructButton()
     BotModel:SetAllPoints("AHButton")
     BotModel:SetFrameStrata("HIGH")
     BotModel:SetFrameLevel(2)
-    BotModel:SetMovable(true)
-    BotModel:SetUserPlaced(true)
     BotModel:SetCreature(DalaranAHBotNPCID) -- Set AH NPC, out of Cache
     BotModel:SetCamera(0)
     BotModel:SetScale(1)
@@ -242,6 +262,7 @@ function DalaranAHCommandHandler(msg)
                 RefreshButtonSize()
                 ChatPrint(string.format(DAH .. L["Resized Button to "] .. DalaranAH.size .. L[" px"]));
             end
+            return
         else
             ChatPrint(string.format(DAH .. "|cFFFFFF00" .. L["Invalid size."] .. "|r"));
             ChatPrint(string.format("|cFFFFFF00  " .. L["size"] .. "|r - " .. L["Resize Button (min: 10, max: 100, default: 50)"]));
@@ -268,12 +289,11 @@ local function LocaleWarning()
     if locale == "enUS" or locale == "enGB" or locale == "deDE" then
         return true
     elseif locale == "ruRU" or locale == "zhCN" or locale == "zhTW" or locale == "frFR" or locale == "esES" or locale == "esMX" then
-        ChatPrint(string.format("|cff33ff99DalaranAH > |r The localization of your client is incomplete, the addon works but is mostly in English, Help us complete your localization at: https://github.com/NoM0Re/DalaranAH"))
+        ChatPrint(string.format("|cff33ff99DalaranAH > |r The localization is incomplete. Help us complete your localization at: https://github.com/NoM0Re/DalaranAH"))
         return true
-    else
-        ChatPrint(string.format("|cff33ff99DalaranAH > |r The localization of your client is not supported, the addon will not work with your language, help us add support for your language at: https://github.com/NoM0Re/DalaranAH"))
-        return false
     end
+    ChatPrint(string.format("|cff33ff99DalaranAH > |r The localization of your client is not supported, help us add support for your language at: https://github.com/NoM0Re/DalaranAH"))
+    return false
 end
 
 -- Init Saved Variables
