@@ -22,20 +22,23 @@ Addon created by NoM0Re<br/>
   <img alt='PayPal' src='https://img.shields.io/badge/Buy_me a coffee-100000?style=flat-square&logo=PayPal&logoColor=white&labelColor=3b7bbf&color=000000'/>
 </a>
 <br/><br/>
+# **Localisations:**
+
+**The Addon needs Localisations in order to work.**<br/>
+**Currently Supported Clients are enUS, enGB, deDE, ruRU, frFR, esES, esMX, zhCN, zhTW**<br/><br/>
+Help me localize ur Client Languague [here](https://github.com/NoM0Re/DalaranAH/pulls)<br/><br/>
+
 # **Slashcommands:**
-**/dah**, **/dalaranah**<br/>
-**size** - Resize Button (min: 10, max: 100, default: 50)<br/>
-**reset** - Resets Position to Center<br/>
-**focus** - On Button-click sets AHBot to focus<br/>
-**mark** - On Button-click gives AHBot a raidmark<br/>
-**help** - Prints Help<br/><br/>
+`/dah`, `/dalaranah`<br/>
+`size` - Resize Button (min: 10, max: 100, default: 50)<br/>
+`reset` - Resets Position to Center<br/>
+`focus` - On Button-click sets AHBot to focus<br/>
+`mark` - On Button-click gives AHBot a raidmark<br/>
+`help` - Prints Help<br/><br/>
+
 # **Installation:**
 1. [Download here](https://github.com/NoM0Re/DalaranAH/archive/refs/heads/main.zip)<br/><br/>
 2. Unzip and take folder **DalaranAH**<br/><br/>
-3. Put it in ur /Interface/Addons folder<br/><br/>
-# **Localisations:**
-The Addon needs Localisations in order to work.<br/><br/>
-**Currently Supported Clients are enUS, enGB, deDE, ruRU, frFR, esES, esMX, zhCN, zhTW**<br/>
-Help me localize ur Client Languague [here](https://github.com/NoM0Re/DalaranAH/pulls)<br/><br/><br/>
+3. Put it in ur /Interface/Addons folder<br/><br/><br/>
 
 
