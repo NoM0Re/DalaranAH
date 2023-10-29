@@ -2,6 +2,7 @@
 local L = LibStub("AceLocale-3.0"):GetLocale("DalaranAH")
 
 -- WoW Api Functions
+local IsSpellKnown = IsSpellKnown
 local GetBinding = GetBinding
 local GetMinimapZoneText = GetMinimapZoneText
 local GetUnitName = GetUnitName
@@ -18,12 +19,19 @@ local DalaranAHBotNPCID = 35594 -- AH NPC ID
 local ButtonSize
 local ButtonHalfSize
 
-local function CheckEngineering()
-    return true --Needs to be included.
+local function CheckEngineering() -- Engineering Grandmaster
+    if IsSpellKnown(51306) then return true end
+    return false
 end
 
 local function ZoneCheck()
     return tostring(GetMinimapZoneText()) == L["Like Clockwork"]
+end
+
+-- Open AH Selecting first Gossip on Interact
+local function OnGossipShow()
+    if not ZoneCheck() then return end
+    if GetUnitName("target") == L["Brassbolt Mechawrench"] then SelectGossipOption(1) end
 end
 
 -- Update Tooltip when Button Clicked
@@ -58,6 +66,12 @@ local function GenerateTooltips()
     return TooltipBind1, TooltipBind2
 end
 
+local function ChatPrint(str)
+    if (DEFAULT_CHAT_FRAME) then
+        DEFAULT_CHAT_FRAME:AddMessage(str);
+    end
+end
+
 -- Hide Button
 local function ButtonHide()
     if not ZoneCheck() and AHButton then
@@ -86,9 +100,8 @@ local function setMacroText(mark, focus)
     end
     return macroText
 end
-
+-- Create Button and Model
 local function constructButton()
-    -- Create Button and Model
     -- Button with Backdrop
     AHButton = CreateFrame("Button", "AHButton", UIParent, "SecureActionButtonTemplate")
     AHButton:Hide()
@@ -98,8 +111,7 @@ local function constructButton()
     AHButton:SetFrameLevel(1)
     AHButton:SetMovable(true)
     AHButton:SetUserPlaced(true)
-    AHButton:SetBackdrop(
-        {
+    AHButton:SetBackdrop({
             bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
             edgeFile = "Interface\\Tooltips\\UI-Tooltip-Background",
             edgeSize = 1,
@@ -109,8 +121,7 @@ local function constructButton()
                 top = 0,
                 bottom = 0
             },
-        }
-    )
+        })
     AHButton:SetBackdropColor(0, 0, 0, 0.7)
     AHButton:SetBackdropBorderColor(0, 0, 0, 1)
     AHButton:SetHighlightTexture(nil)
@@ -206,13 +217,19 @@ local function OnMark()
     end
 end
 
--- Open AH Selecting first Gossip on Interact
-local function OnGossipShow()
-    if not ZoneCheck() then return end
-    if GetUnitName("target") == L["Brassbolt Mechawrench"] then SelectGossipOption(1) end
+-- Slash Help
+local function SlashHelp(showHelp)
+ChatPrint(string.format("|cff33ff99" .. L["DalaranAH Commands"] .. "|r: " .. L["Arguments to /dah :"]));
+ChatPrint(string.format("|cFFFFFF00  " .. L["size"] .. "|r - " .. L["Resize Button (min: 10, max: 100, default: 50)"]))
+ChatPrint(string.format("|cFFFFFF00  " .. L["reset"] .. "|r - " .. L["Resets Position to Center"]))
+ChatPrint(string.format("|cFFFFFF00  " .. L["focus"] .. "|r - " .. L["On Button-click sets AHBot to focus"]))
+ChatPrint(string.format("|cFFFFFF00  " .. L["mark"] .. "|r - " .. L["On Button-click gives AHBot a raidmark"]))
+if showHelp == false then
+    ChatPrint(string.format("|cFFFFFF00  " .. L["help"] .. "|r - " .. L["Prints Help"]))
+end
 end
 
---Slash Handler
+-- Slash Handler
 function DalaranAHCommandHandler(msg)
     local DAH = "|cff33ff99DalaranAH > |r"
     msg = string.lower(msg)
@@ -223,34 +240,25 @@ function DalaranAHCommandHandler(msg)
             if sizeValue >= 10 and sizeValue <= 100 then
                 DalaranAH.size = sizeValue
                 RefreshButtonSize()
-                print(DAH .. L["Resized Button to "] .. DalaranAH.size .. L[" px"])
+                ChatPrint(string.format(DAH .. L["Resized Button to "] .. DalaranAH.size .. L[" px"]));
             end
         else
-            print(DAH .. "|cFFFFFF00" .. L["Invalid size."] .. "|r")
-            print("|cFFFFFF00  " .. L["size"] .. "|r - " .. L["Resize Button (min: 10, max: 100, default: 50)"])
+            ChatPrint(string.format(DAH .. "|cFFFFFF00" .. L["Invalid size."] .. "|r"));
+            ChatPrint(string.format("|cFFFFFF00  " .. L["size"] .. "|r - " .. L["Resize Button (min: 10, max: 100, default: 50)"]));
         end
     elseif msg == L["reset"] then
         OnButtonPositionReset()
-        print(DAH .. L["Button Position reset."])
+        ChatPrint(string.format(DAH .. L["Button Position reset."]));
     elseif msg == L["focus"] then
         OnFocus()
-        print(DAH .. L["Set Focus: "] .. tostring(DalaranAH.focus))
+        ChatPrint(string.format(DAH .. L["Set Focus: "] .. tostring(DalaranAH.focus)));
     elseif msg == L["mark"] then
         OnMark()
-        print(DAH .. L["Set Mark: "] .. tostring(DalaranAH.mark))
+        ChatPrint(string.format(DAH .. L["Set Mark: "] .. tostring(DalaranAH.mark)));
     elseif msg == L["help"] then
-        print("|cff33ff99" .. L["DalaranAH Commands"] .. "|r: " .. L["Arguments to /dah :"])
-        print("|cFFFFFF00  " .. L["size"] .. "|r - " .. L["Resize Button (min: 10, max: 100, default: 50)"])
-        print("|cFFFFFF00  " .. L["reset"] .. "|r - " .. L["Resets Position to Center"])
-        print("|cFFFFFF00  " .. L["focus"] .. "|r - " .. L["On Button-click sets AHBot to focus"])
-        print("|cFFFFFF00  " .. L["mark"] .. "|r - " .. L["On Button-click gives AHBot a raidmark"])
+        SlashHelp(true)
     else
-        print("|cff33ff99" .. L["DalaranAH Commands"] .. "|r: " .. L["Arguments to /dah :"])
-        print("|cFFFFFF00  " .. L["size"] .. "|r - " .. L["Resize Button (min: 10, max: 100, default: 50)"])
-        print("|cFFFFFF00  " .. L["reset"] .. "|r - " .. L["Resets Position to Center"])
-        print("|cFFFFFF00  " .. L["focus"] .. "|r - " .. L["On Button-click sets AHBot to focus"])
-        print("|cFFFFFF00  " .. L["mark"] .. "|r - " .. L["On Button-click gives AHBot a raidmark"])
-        print("|cFFFFFF00  " .. L["help"] .. "|r - " .. L["Prints Help"])
+        SlashHelp(false)
     end
 end
 
@@ -260,17 +268,41 @@ local function LocaleWarning()
     if locale == "enUS" or locale == "enGB" or locale == "deDE" then
         return true
     elseif locale == "ruRU" or locale == "zhCN" or locale == "zhTW" or locale == "frFR" or locale == "esES" or locale == "esMX" then
-        print("|cff33ff99DalaranAH > |r The localization of your client is incomplete, the addon works but is mostly in English.")
-        print("|cff33ff99DalaranAH > |r Help us complete your localization at: https://github.com/NoM0Re/DalaranAH")
+        ChatPrint(string.format("|cff33ff99DalaranAH > |r The localization of your client is incomplete, the addon works but is mostly in English, Help us complete your localization at: https://github.com/NoM0Re/DalaranAH"))
         return true
     else
-        print("|cff33ff99DalaranAH > |r Your client's localization is not supported, the addon will not work with your language!")
-        print("|cff33ff99DalaranAH > |r Help us add support for your language at: https://github.com/NoM0Re/DalaranAH")
+        ChatPrint(string.format("|cff33ff99DalaranAH > |r The localization of your client is not supported, the addon will not work with your language, help us add support for your language at: https://github.com/NoM0Re/DalaranAH"))
         return false
     end
 end
 
--- Register Events to Frames
+-- Init Saved Variables
+local function InitializeSavedVariables()
+    if not DalaranAH then DalaranAH = {} end
+    if DalaranAH.focus == nil then DalaranAH.focus = false end
+    if DalaranAH.mark == nil then DalaranAH.mark = false end
+    if DalaranAH.size == nil then DalaranAH.size = 50 end
+    RefreshButtonSize()
+    local width, height = GetScreenWidth() / 2 - ButtonHalfSize, GetScreenHeight() / 2 - ButtonHalfSize
+    if not DalaranAH.y then DalaranAH.y = height end
+    if not DalaranAH.x then DalaranAH.x = width end
+end
+
+-- Init Addon
+local function OnInit(frame)
+    frame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+    InitializeSavedVariables()
+    if CheckEngineering() and LocaleWarning() then
+        constructButton()
+        ButtonShow()
+    end
+end
+
+-- Create EventsFrames for Events
+local Init = CreateFrame("Frame")
+Init:RegisterEvent("PLAYER_ENTERING_WORLD")
+Init:SetScript("OnEvent", OnInit)
+
 local indoor = CreateFrame("Frame")
 indoor:RegisterEvent("ZONE_CHANGED_INDOORS")
 indoor:SetScript("OnEvent", ButtonShow)
@@ -283,34 +315,7 @@ local gossip = CreateFrame("Frame")
 gossip:RegisterEvent("GOSSIP_SHOW")
 gossip:SetScript("OnEvent", OnGossipShow)
 
--- Init
-local function OnInit(frame, event)
-    if event == "PLAYER_ENTERING_WORLD" then
-        frame:UnregisterEvent("PLAYER_ENTERING_WORLD")
-        local width, height
-        if not DalaranAH then DalaranAH = {} end
-        if DalaranAH.focus == nil then DalaranAH.focus = false end
-        if DalaranAH.mark == nil then DalaranAH.mark = false end
-        if DalaranAH.size == nil then DalaranAH.size = 50 end
-        RefreshButtonSize()
-        if not DalaranAH.x or not DalaranAH.y then width, height = GetScreenWidth() / 2 - ButtonHalfSize, GetScreenHeight() / 2 - ButtonHalfSize end
-        if not DalaranAH.y then DalaranAH.y = height end
-        if not DalaranAH.x then DalaranAH.x = width end
-        SLASH_DALARANAH1 = "/dah"
-        SLASH_DALARANAH2 = "/dalaranah"
-        SlashCmdList["DALARANAH"] = DalaranAHCommandHandler
-        if LocaleWarning() and CheckEngineering() then
-            constructButton()
-            ButtonShow()
-        else
-            indoor:UnregisterAllEvents()
-            outdoor:UnregisterAllEvents()
-            gossip:UnregisterAllEvents()
-        end
-    end
-end
-
--- Register Init Event
-local Init = CreateFrame("Frame")
-Init:RegisterEvent("PLAYER_ENTERING_WORLD")
-Init:SetScript("OnEvent", OnInit)
+-- Register Slash Command Handler
+SlashCmdList["DALARANAH"] = DalaranAHCommandHandler
+SLASH_DALARANAH1 = "/dah"
+SLASH_DALARANAH2 = "/dalaranah"
