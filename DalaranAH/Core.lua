@@ -4,7 +4,7 @@
 -- *********************************************************
 --
 -- This addon is written and copyrighted by:
--- NoM0Re
+-- - NoM0Re
 --
 -- The localizations are written by:
 --    * enGB/enUS: NoM0Re
@@ -19,7 +19,6 @@
 --    * Attribution. You must attribute the work in the manner specified by the author or licensor (but not in any way that suggests that they endorse you or your use of the work).
 --    * Noncommercial. You may not use this work for commercial purposes.
 --    * Share Alike. If you alter, transform, or build upon this work, you may distribute the resulting work only under the same or similar license to this one.
-
 -- Libs
 local L = LibStub("AceLocale-3.0"):GetLocale("DalaranAH")
 
@@ -40,7 +39,6 @@ local BotModel
 local DalaranAHBotNPCID = 35594 -- AH NPC ID
 local ButtonSize
 local ButtonHalfSize
-
 local function CheckEngineering() -- Engineering Grandmaster
     if IsSpellKnown(51306) then return true end
     return false
@@ -53,7 +51,7 @@ end
 -- Open AH Selecting first Gossip on Interact
 local function OnGossipShow()
     if not ZoneCheck() then return end
-    if GetUnitName("target") == L["Brassbolt Mechawrench"] then SelectGossipOption(1) end
+    if GetUnitName("target", 1) == L["Brassbolt Mechawrench"] then SelectGossipOption(1) end
 end
 
 -- Update Tooltip when Button Clicked
@@ -65,9 +63,8 @@ end
 local function GenerateTooltips()
     local _, Bind1, Bind2 = GetBinding(116) -- INTERACTTARGET
     local _, mBind1, mBind2 = GetBinding(115) -- INTERACTMOUSEOVER
-    local TooltipBind1
-    local TooltipBind2
-    --case1
+    local TooltipBind1, TooltipBind2
+    --case1 INTERACTTARGET
     if Bind1 and not Bind2 then
         TooltipBind1 = L["Press "] .. Bind1 .. L[" to interact with Target"]
     elseif not Bind1 and Bind2 then
@@ -75,7 +72,7 @@ local function GenerateTooltips()
     elseif Bind1 and Bind2 then
         TooltipBind1 = L["Press "] .. Bind1 .. L[" or "] .. Bind2 .. L[" to interact with Target"]
     end
-    --case2
+    --case2 INTERACTMOUSEOVER
     if mBind1 and not mBind2 then
         TooltipBind2 = L["Press "] .. mBind1 .. L[" to interact with Mouseover"]
     elseif not mBind1 and mBind2 then
@@ -83,22 +80,19 @@ local function GenerateTooltips()
     elseif mBind1 and mBind2 then
         TooltipBind2 = L["Press "] .. mBind1 .. L[" or "] .. mBind2 .. L[" to interact with Mouseover"]
     end
-    --case3
+    --case3 both not
     if not mBind1 and not mBind2 and not Bind1 and not Bind2 then TooltipBind1, TooltipBind2 = L["Bind 'Interact with Target' to interact with the Target"], L["Bind 'Interact with Mouseover' to interact with the Mouseover"] end
     return TooltipBind1, TooltipBind2
 end
 
+-- Prints Addon messages
 local function ChatPrint(str)
-    if (DEFAULT_CHAT_FRAME) then
-        DEFAULT_CHAT_FRAME:AddMessage(str);
-    end
+    if DEFAULT_CHAT_FRAME then DEFAULT_CHAT_FRAME:AddMessage(str) end
 end
 
 -- Hide Button
 local function ButtonHide()
-    if not ZoneCheck() and AHButton then
-    AHButton:Hide()
-    end
+    if not ZoneCheck() and AHButton then AHButton:Hide() end
 end
 
 -- Show Button
@@ -112,16 +106,22 @@ end
 
 -- Slashcommandhandler: Focus / Mark
 local function setMacroText(mark, focus)
-    local macroText = "/tar " .. L["Brassbolt Mechawrench"]
-    if mark and focus then
-        macroText = macroText .. "\n/focus\n/run local GetTargetName = tostring(GetUnitName('target', 1)); if GetTargetName == '" .. L["Brassbolt Mechawrench"] .. "' then SetRaidTarget('target', 4) end"
+    local NPCName = L["Brassbolt Mechawrench"]
+    local macroText = "/tar " .. NPCName
+    if not mark and not focus then
+        return macroText
+    elseif mark and focus then
+        macroText = macroText .. "\n/focus\n/run local GetTargetName = tostring(GetUnitName('target', 1)); if GetTargetName == '" .. NPCName .. "' then SetRaidTarget('target', 4) end"
+        return macroText
     elseif mark then
-        macroText = macroText .. "\n/run local GetTargetName = tostring(GetUnitName('target', 1)); if GetTargetName == '" .. L["Brassbolt Mechawrench"] .. "' then SetRaidTarget('target', 4) end"
+        macroText = macroText .. "\n/run local GetTargetName = tostring(GetUnitName('target', 1)); if GetTargetName == '" .. NPCName .. "' then SetRaidTarget('target', 4) end"
+        return macroText
     elseif focus then
         macroText = macroText .. "\n/focus"
+        return macroText
     end
-    return macroText
 end
+
 -- Create Button and Model
 local function constructButton()
     -- Button with Backdrop
@@ -133,7 +133,8 @@ local function constructButton()
     AHButton:SetFrameLevel(1)
     AHButton:SetMovable(true)
     AHButton:SetUserPlaced(true)
-    AHButton:SetBackdrop({
+    AHButton:SetBackdrop(
+        {
             bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
             edgeFile = "Interface\\Tooltips\\UI-Tooltip-Background",
             edgeSize = 1,
@@ -143,15 +144,16 @@ local function constructButton()
                 top = 0,
                 bottom = 0
             },
-        })
+        }
+    )
+
     AHButton:SetBackdropColor(0, 0, 0, 0.7)
     AHButton:SetBackdropBorderColor(0, 0, 0, 1)
     AHButton:SetHighlightTexture(nil)
     AHButton:SetPushedTexture(nil)
     AHButton:SetAttribute("type", "macro")
     AHButton:SetAttribute("macrotext", setMacroText(DalaranAH.mark, DalaranAH.focus)) -- Call Function
-    AHButton:SetScript(
-        "OnEnter",
+    AHButton:SetScript("OnEnter",
         function(self)
             local Tooltip1, Tooltip2 = GenerateTooltips()
             local GetTargetName = tostring(GetUnitName("target", 1))
@@ -159,21 +161,16 @@ local function constructButton()
                 GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
                 GameTooltip:SetUnit("target")
                 GameTooltip:AddLine(" ", 1, 1, 1)
-                if Tooltip1 then
-                    GameTooltip:AddLine("|cffffd100" .. Tooltip1 .. "|r", 1, 1, 1)
-                end
-                if Tooltip2 then
-                    GameTooltip:AddLine("|cffffd100" .. Tooltip2 .. "|r", 1, 1, 1)
-                end
+                if Tooltip1 then GameTooltip:AddLine("|cffffd100" .. Tooltip1 .. "|r", 1, 1, 1) end
+                if Tooltip2 then GameTooltip:AddLine("|cffffd100" .. Tooltip2 .. "|r", 1, 1, 1) end
                 GameTooltip:Show()
                 return
             end
-                GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
-                GameTooltip:SetText(L["Brassbolt Mechawrench"])
-                GameTooltip:AddLine("|cffffd100" .. L["Left-click to target"] .. "|r", 1, 1, 1)
-                GameTooltip:Show()
-        end
-    )
+            GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
+            GameTooltip:SetText(L["Brassbolt Mechawrench"])
+            GameTooltip:AddLine("|cffffd100" .. L["Left-click to target"] .. "|r", 1, 1, 1)
+            GameTooltip:Show()
+        end)
 
     AHButton:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
     AHButton:SetScript("OnMouseDown", function(self, button) if IsShiftKeyDown() and button == "LeftButton" then self:StartMoving() end end)
@@ -184,12 +181,10 @@ local function constructButton()
                 DalaranAH.x, DalaranAH.y = self:GetCenter()
                 DalaranAH.x, DalaranAH.y = DalaranAH.x - ButtonHalfSize, DalaranAH.y - ButtonHalfSize
             end
-
             UpdateTooltipOnClick()
-        end
-    )
-    AHButton:RegisterForClicks("AnyDown")
+        end)
 
+    AHButton:RegisterForClicks("AnyDown")
     -- DalaranAHBot Model
     BotModel = CreateFrame("PlayerModel", nil, AHButton)
     BotModel:SetParent(AHButton) -- Needs debug if needed
@@ -206,47 +201,36 @@ end
 local function RefreshButtonSize()
     ButtonSize = tonumber(DalaranAH.size)
     ButtonHalfSize = ButtonSize / 2
-    if AHButton and BotModel then
-        AHButton:SetSize(ButtonSize, ButtonSize)
-        BotModel:SetAllPoints("AHButton")
-    end
+    if AHButton and BotModel then AHButton:SetSize(ButtonSize, ButtonSize) end
 end
 
 -- Slashcommandhandler: Reset
 local function OnButtonPositionReset()
     local width, height = GetScreenWidth() / 2 - ButtonHalfSize, GetScreenHeight() / 2 - ButtonHalfSize
     DalaranAH.x, DalaranAH.y = width, height
-    if AHButton then
-        AHButton:SetPoint("BOTTOMLEFT", DalaranAH.x, DalaranAH.y)
-    end
+    if AHButton then AHButton:SetPoint("BOTTOMLEFT", DalaranAH.x, DalaranAH.y) end
 end
 
 -- Slashcommandhandler: Focus
 local function OnFocus()
     DalaranAH.focus = not DalaranAH.focus -- Toggles on/off
-    if AHButton and BotModel then
-        AHButton:SetAttribute("macrotext", setMacroText(DalaranAH.mark, DalaranAH.focus))
-    end
+    if AHButton then AHButton:SetAttribute("macrotext", setMacroText(DalaranAH.mark, DalaranAH.focus)) end
 end
 
 -- Slashcommandhandler: Mark
 local function OnMark()
     DalaranAH.mark = not DalaranAH.mark -- Toggles on/off
-    if AHButton and BotModel then
-        AHButton:SetAttribute("macrotext", setMacroText(DalaranAH.mark, DalaranAH.focus))
-    end
+    if AHButton then AHButton:SetAttribute("macrotext", setMacroText(DalaranAH.mark, DalaranAH.focus)) end
 end
 
 -- Slash Help
 local function SlashHelp(showHelp)
-ChatPrint(string.format("|cff33ff99" .. L["DalaranAH Commands"] .. "|r: " .. L["Arguments to /dah :"]));
-ChatPrint(string.format("|cFFFFFF00  " .. L["size"] .. "|r - " .. L["Resize Button (min: 10, max: 100, default: 50)"]))
-ChatPrint(string.format("|cFFFFFF00  " .. L["reset"] .. "|r - " .. L["Resets Position to Center"]))
-ChatPrint(string.format("|cFFFFFF00  " .. L["focus"] .. "|r - " .. L["On Button-click sets AHBot to focus"]))
-ChatPrint(string.format("|cFFFFFF00  " .. L["mark"] .. "|r - " .. L["On Button-click gives AHBot a raidmark"]))
-if showHelp == false then
-    ChatPrint(string.format("|cFFFFFF00  " .. L["help"] .. "|r - " .. L["Prints Help"]))
-end
+    ChatPrint(string.format("|cff33ff99" .. L["DalaranAH Commands"] .. "|r: " .. L["Arguments to /dah :"]))
+    ChatPrint(string.format("|cFFFFFF00  " .. L["size"] .. "|r - " .. L["Resize Button (min: 10, max: 100, default: 50)"]))
+    ChatPrint(string.format("|cFFFFFF00  " .. L["reset"] .. "|r - " .. L["Resets Position to Center"]))
+    ChatPrint(string.format("|cFFFFFF00  " .. L["focus"] .. "|r - " .. L["On Button-click sets AHBot to focus"]))
+    ChatPrint(string.format("|cFFFFFF00  " .. L["mark"] .. "|r - " .. L["On Button-click gives AHBot a raidmark"]))
+    if showHelp == false then ChatPrint(string.format("|cFFFFFF00  " .. L["help"] .. "|r - " .. L["Prints Help"])) end
 end
 
 -- Slash Handler
@@ -260,21 +244,21 @@ function DalaranAHCommandHandler(msg)
             if sizeValue >= 10 and sizeValue <= 100 then
                 DalaranAH.size = sizeValue
                 RefreshButtonSize()
-                ChatPrint(string.format(DAH .. L["Resized Button to "] .. DalaranAH.size .. L[" px"]));
+                ChatPrint(string.format(DAH .. L["Resized Button to "] .. DalaranAH.size .. L[" px"]))
             end
         else
-            ChatPrint(string.format(DAH .. "|cFFFFFF00" .. L["Invalid size."] .. "|r"));
-            ChatPrint(string.format("|cFFFFFF00  " .. L["size"] .. "|r - " .. L["Resize Button (min: 10, max: 100, default: 50)"]));
+            ChatPrint(string.format(DAH .. "|cFFFFFF00" .. L["Invalid size."] .. "|r"))
+            ChatPrint(string.format("|cFFFFFF00  " .. L["size"] .. "|r - " .. L["Resize Button (min: 10, max: 100, default: 50)"]))
         end
     elseif msg == L["reset"] then
         OnButtonPositionReset()
-        ChatPrint(string.format(DAH .. L["Button Position reset."]));
+        ChatPrint(string.format(DAH .. L["Button Position reset."]))
     elseif msg == L["focus"] then
         OnFocus()
-        ChatPrint(string.format(DAH .. L["Set Focus: "] .. tostring(DalaranAH.focus)));
+        ChatPrint(string.format(DAH .. L["Set Focus: "] .. tostring(DalaranAH.focus)))
     elseif msg == L["mark"] then
         OnMark()
-        ChatPrint(string.format(DAH .. L["Set Mark: "] .. tostring(DalaranAH.mark)));
+        ChatPrint(string.format(DAH .. L["Set Mark: "] .. tostring(DalaranAH.mark)))
     elseif msg == L["help"] then
         SlashHelp(true)
     else
@@ -313,7 +297,7 @@ local function OnInit(frame)
     InitializeSavedVariables()
     if CheckEngineering() and LocaleWarning() then
         constructButton()
-        ButtonShow()
+        C_Timer.After(4, ButtonShow) -- If u spawn in the AH delays 4sec until MinimapInformation is loaded.
     end
 end
 
