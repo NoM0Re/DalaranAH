@@ -133,8 +133,7 @@ local function constructButton()
     AHButton:SetFrameLevel(1)
     AHButton:SetMovable(true)
     AHButton:SetUserPlaced(true)
-    AHButton:SetBackdrop(
-        {
+    AHButton:SetBackdrop({
             bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
             edgeFile = "Interface\\Tooltips\\UI-Tooltip-Background",
             edgeSize = 1,
@@ -142,11 +141,7 @@ local function constructButton()
                 left = 0,
                 right = 0,
                 top = 0,
-                bottom = 0
-            },
-        }
-    )
-
+                bottom = 0 },})
     AHButton:SetBackdropColor(0, 0, 0, 0.7)
     AHButton:SetBackdropBorderColor(0, 0, 0, 1)
     AHButton:SetHighlightTexture(nil)
@@ -171,7 +166,6 @@ local function constructButton()
             GameTooltip:AddLine("|cffffd100" .. L["Left-click to target"] .. "|r", 1, 1, 1)
             GameTooltip:Show()
         end)
-
     AHButton:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
     AHButton:SetScript("OnMouseDown", function(self, button) if IsShiftKeyDown() and button == "LeftButton" then self:StartMoving() end end)
     AHButton:SetScript("OnMouseUp",
@@ -183,7 +177,6 @@ local function constructButton()
             end
             UpdateTooltipOnClick()
         end)
-
     AHButton:RegisterForClicks("AnyDown")
     -- DalaranAHBot Model
     BotModel = CreateFrame("PlayerModel", nil, AHButton)
@@ -245,22 +238,32 @@ function DalaranAHCommandHandler(msg)
                 DalaranAH.size = sizeValue
                 RefreshButtonSize()
                 ChatPrint(string.format(DAH .. L["Resized Button to "] .. DalaranAH.size .. L[" px"]))
+                return
+            else
+                ChatPrint(string.format(DAH .. "|cFFFFFF00" .. L["Invalid size."] .. "|r"))
+                ChatPrint(string.format("|cFFFFFF00  " .. L["size"] .. "|r - " .. L["Resize Button (min: 10, max: 100, default: 50)"]))
+                return
             end
         else
-            ChatPrint(string.format(DAH .. "|cFFFFFF00" .. L["Invalid size."] .. "|r"))
+            ChatPrint(string.format(DAH .. "|cFFFFFF00" .. L["Invalid usage."] .. "|r"))
             ChatPrint(string.format("|cFFFFFF00  " .. L["size"] .. "|r - " .. L["Resize Button (min: 10, max: 100, default: 50)"]))
+            return
         end
     elseif msg == L["reset"] then
         OnButtonPositionReset()
         ChatPrint(string.format(DAH .. L["Button Position reset."]))
+        return
     elseif msg == L["focus"] then
         OnFocus()
         ChatPrint(string.format(DAH .. L["Set Focus: "] .. tostring(DalaranAH.focus)))
+        return
     elseif msg == L["mark"] then
         OnMark()
         ChatPrint(string.format(DAH .. L["Set Mark: "] .. tostring(DalaranAH.mark)))
+        return
     elseif msg == L["help"] then
         SlashHelp(true)
+        return
     else
         SlashHelp(false)
     end
