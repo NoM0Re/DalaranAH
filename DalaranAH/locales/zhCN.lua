@@ -4,7 +4,7 @@ if not L then return end
 
 L["Like Clockwork"] = "精密仪器"
 L["Brassbolt Mechawrench"] = "布拉斯博特·机钳"
-L["Reginald Arcfire"] = true
+L["Reginald Arcfire"] = "雷加纳德·弧炎"
 L["Press "] = "Press "
 L[" to interact with Target"] = " to interact with Target"
 L[" or "] = " or "
