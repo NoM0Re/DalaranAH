@@ -32,13 +32,28 @@ local GetScreenWidth, GetScreenHeight = GetScreenWidth, GetScreenHeight
 local SelectGossipOption = SelectGossipOption
 local CreateFrame, GameTooltip = CreateFrame, GameTooltip
 local GetLocale = GetLocale
+local UnitFactionGroup = UnitFactionGroup
 
 -- local Variables
+local DalaranAHBotNPCIDA = 35594 -- AH NPC Horde ID
+local DalaranAHBotNPCIDH = 35607 -- AH NPC Alliance ID
+
 local AHButton
 local BotModel
-local DalaranAHBotNPCID = 35594 -- AH NPC ID
+local NPCName
+local DalaranAHBotNPCID
 local ButtonSize
 local ButtonHalfSize
+
+local function GetFactionNPCNameAndID()
+    local faction = UnitFactionGroup("player")
+    if faction == "Horde" then
+        return L["Reginald Arcfire"], DalaranAHBotNPCIDH -- Hier den Namen und die ID des Horde-NPCs zurückgeben
+    elseif faction == "Alliance" then
+        return L["Brassbolt Mechawrench"], DalaranAHBotNPCIDA -- Hier den Namen und die ID des Alliance-NPCs zurückgeben
+    end
+end
+
 local function CheckEngineering() -- Engineering Grandmaster
     if IsSpellKnown(51306) then return true end
     return false
@@ -51,7 +66,7 @@ end
 -- Open AH Selecting first Gossip on Interact
 local function OnGossipShow()
     if not ZoneCheck() then return end
-    if GetUnitName("target", 1) == L["Brassbolt Mechawrench"] then SelectGossipOption(1) end
+    if GetUnitName("target", 1) == NPCName then SelectGossipOption(1) end
 end
 
 -- Update Tooltip when Button Clicked
@@ -106,7 +121,6 @@ end
 
 -- Slashcommandhandler: Focus / Mark
 local function setMacroText(mark, focus)
-    local NPCName = L["Brassbolt Mechawrench"]
     local macroText = "/tar " .. NPCName
     if not mark and not focus then
         return macroText
@@ -152,7 +166,7 @@ local function constructButton()
         function(self)
             local Tooltip1, Tooltip2 = GenerateTooltips()
             local GetTargetName = tostring(GetUnitName("target", 1))
-            if GetTargetName == L["Brassbolt Mechawrench"] then
+            if GetTargetName == NPCName then
                 GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
                 GameTooltip:SetUnit("target")
                 GameTooltip:AddLine(" ", 1, 1, 1)
@@ -162,7 +176,7 @@ local function constructButton()
                 return
             end
             GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
-            GameTooltip:SetText(L["Brassbolt Mechawrench"])
+            GameTooltip:SetText(NPCName)
             GameTooltip:AddLine("|cffffd100" .. L["Left-click to target"] .. "|r", 1, 1, 1)
             GameTooltip:Show()
         end)
@@ -298,6 +312,7 @@ end
 local function OnInit(frame)
     frame:UnregisterEvent("PLAYER_ENTERING_WORLD")
     InitializeSavedVariables()
+    NPCName, DalaranAHBotNPCID = GetFactionNPCNameAndID()
     if CheckEngineering() and LocaleWarning() then
         constructButton()
         C_Timer.After(4, ButtonShow) -- If u spawn in the AH delays 4sec until MinimapInformation is loaded.

@@ -9,7 +9,6 @@
 ## X-Website: https://github.com/NoM0Re/DalaranAH
 
 libs.xml
-
 locales\enUS.lua
 locales\enGB.lua
 locales\deDE.lua
@@ -19,6 +18,5 @@ locales\esMX.lua
 locales\ruRU.lua
 locales\zhCN.lua
 locales\zhTW.lua
-
 
 Core.lua

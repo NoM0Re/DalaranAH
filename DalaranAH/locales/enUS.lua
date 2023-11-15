@@ -4,6 +4,7 @@ if not L then return end
 
 L["Like Clockwork"] = true
 L["Brassbolt Mechawrench"] = true
+L["Reginald Arcfire"] = true
 L["Press "] = true
 L[" to interact with Target"] = true
 L[" or "] = true
