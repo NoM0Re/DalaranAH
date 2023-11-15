@@ -48,9 +48,9 @@ local ButtonHalfSize
 local function GetFactionNPCNameAndID()
     local faction = UnitFactionGroup("player")
     if faction == "Horde" then
-        return L["Reginald Arcfire"], DalaranAHBotNPCIDH -- Hier den Namen und die ID des Horde-NPCs zurückgeben
+        return L["Reginald Arcfire"], DalaranAHBotNPCIDH
     elseif faction == "Alliance" then
-        return L["Brassbolt Mechawrench"], DalaranAHBotNPCIDA -- Hier den Namen und die ID des Alliance-NPCs zurückgeben
+        return L["Brassbolt Mechawrench"], DalaranAHBotNPCIDA
     end
 end
 
