@@ -39,6 +39,7 @@ You can easily reposition the GUI by simply holding down the Shift and left-clic
 
 # **Slashcommands:**
 <br/>
+
 `/dah`, `/dalaranah`<br/>
 `size` - Resize Button (min: 10, max: 100, default: 50)<br/>
 `reset` - Resets Position to Center<br/>
