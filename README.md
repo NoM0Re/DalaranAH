@@ -28,7 +28,17 @@ Addon created by NoM0Re<br/>
 **Currently Supported Clients are enUS, enGB, deDE, ruRU, frFR, esES, esMX, zhCN, zhTW**<br/><br/>
 Help me localize ur Client Languague [here](https://github.com/NoM0Re/DalaranAH/pulls)<br/><br/>
 
+# **Usage:**
+<br/>
+When accessing Dalaran's Auction House, the Addon will automatically open.<br/>
+To engage with the Auction House Bot, a left-click will target the NPC.<br/>
+Please note that interacting with the Auction House Bot requires either binding the 'Interact with Target' or 'Interact with Mouseover' bind in the game's keybinds settings.<br/>
+This is the only available method to interact with this NPC.<br/>
+You can easily reposition the GUI by simply holding down the Shift and left-click.<br/>
+<br/>
+
 # **Slashcommands:**
+<br/>
 `/dah`, `/dalaranah`<br/>
 `size` - Resize Button (min: 10, max: 100, default: 50)<br/>
 `reset` - Resets Position to Center<br/>
