@@ -38,6 +38,7 @@ local UnitFactionGroup = UnitFactionGroup
 local DalaranAHBotNPCIDA = 35594 -- AH NPC Horde ID
 local DalaranAHBotNPCIDH = 35607 -- AH NPC Alliance ID
 
+local timer
 local AHButton
 local BotModel
 local NPCName
@@ -315,7 +316,14 @@ local function OnInit(frame)
     NPCName, DalaranAHBotNPCID = GetFactionNPCNameAndID()
     if CheckEngineering() and LocaleWarning() then
         constructButton()
-        C_Timer.After(4, ButtonShow) -- If u spawn in the AH delays 4sec until MinimapInformation is loaded.
+        timer = 0
+        frame:SetScript("OnUpdate", function(self, elapsed) -- C_Timer mimik until MiniMap information is available
+            timer = timer + elapsed
+            if timer >= 3 then
+                frame:SetScript("OnUpdate", nil)
+                ButtonShow()
+            end
+        end)
     end
 end
 
