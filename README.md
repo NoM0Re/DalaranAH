@@ -38,8 +38,9 @@ You can easily reposition the GUI by simply holding down the Shift and left-clic
 <br/>
 
 # **Slashcommands:**
-<br/>
-`/dah`, `/dalaranah`<br/>
+  
+`/dah`, `/dalaranah`
+
 
 # **Installation:**
 1. [Download here](https://github.com/NoM0Re/DalaranAH/archive/refs/heads/main.zip)<br/><br/>
