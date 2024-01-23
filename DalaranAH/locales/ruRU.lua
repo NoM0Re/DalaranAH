@@ -2,31 +2,37 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("DalaranAH", "ruRU")
 if not L then return end
 
-L["Like Clockwork"] = "Как часы"
+-- Essential for addon to work correctly
+L["Like Clockwork"] = "\"Как часы\""
 L["Brassbolt Mechawrench"] = "Медноштиф Латунник"
 L["Reginald Arcfire"] = "Реджинальд Огненный Свод"
-L["Press "] = "Press "
-L[" to interact with Target"] = " to interact with Target"
-L[" or "] = " or "
-L[" to interact with Mouseover"] = " to interact with Mouseover"
-L["Bind 'Interact with Target' to interact with the Target"] = "Bind 'Interact with Target' to interact with the Target"
-L["Bind 'Interact with Mouseover' to interact with the Mouseover"] = "Bind 'Interact with Mouseover' to interact with the Mouseover"
-L["Left-click to target"] = "Left-click to target"
-L["size"] = "size"
-L["Resized Button to "] = "Resized Button to "
-L[" px"] = " px"
-L["Invalid size."] = "Invalid size."
-L["Resize Button (min: 10, max: 100, default: 50)"] = "Resize Button (min: 10, max: 100, default: 50)"
-L["reset"] = "reset"
-L["Button Position reset."] = "Button Position reset."
-L["focus"] = "focus"
-L["Set Focus: "] = "Set Focus: "
-L["mark"] = "mark"
-L["Set Mark: "] = "Set Mark: "
-L["help"] = "help"
-L["DalaranAH Commands"] = "DalaranAH Commands"
-L["Arguments to /dah :"] = "Arguments to /dah :"
-L["Resets Position to Center"] = "Resets Position to Center"
-L["On Button-click sets AHBot to focus"] = "On Button-click sets AHBot to focus"
-L["On Button-click gives AHBot a raidmark"] = "On Button-click gives AHBot a raidmark"
-L["Prints Help"] = "Prints Help"
+
+-- Tooltip
+L["Left-click to target"] = true
+
+L["Press "] = true
+L[" to interact with Target"] = true
+L[" or "] = true
+L[" to interact with Mouseover"] = true
+
+L["Bind 'Interact with Target' to interact with the Target"] = true
+L["Bind 'Interact with Mouseover' to interact with the Mouseover"] = true
+
+-- Options Table
+L["Reset"] = true
+L["Reset to Defaults"] = true
+L["Reset all settings to default?"] = true
+
+L["General"] = true
+L["Button Size"] = true
+
+L["Additional Functions"] = true
+L["Set Mark on the Auctioneer"] = true
+L["On-Click sets Mark on the Auctioneer"] = true
+L["Select the Mark"] = true
+L["Set Auctioneer as Focus"] = true
+L["On-Click sets Auctioneer as Focus"] = true
+
+L["Keybinds"] = true
+L["Set Keybind to Interact with Mouseover"] = true
+L["Set Keybind to Interact with Target"] = true

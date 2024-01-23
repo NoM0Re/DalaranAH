@@ -2,10 +2,10 @@
 ## Title: DalaranAH
 ## Notes: Creates Button to Target and Interact with the Dalaran-AH-Bot easier.
 ## X-Localizations: enUS, enGB, deDE, ruRU, frFR, esES, esMX, zhCN, zhTW
-## Version: 1.0.0
+## Version: 1.2
 ## Author: NoM0Re
 ## DefaultState: enabled
-## SavedVariables: DalaranAH
+## SavedVariablesPerCharacter: DalaranAHDB
 ## X-Website: https://github.com/NoM0Re/DalaranAH
 
 libs.xml
