@@ -1,4 +1,4 @@
-## Interface: 30300
+## Interface: 30405, 38000
 ## Title: DalaranAH
 ## IconTexture: Interface\Icons\Trade_Engineering
 
@@ -22,10 +22,10 @@
 ## X-Flavor: Wrath
 ## X-Localizations: enUS, deDE, frFR, esES, esMX, ruRU, zhCN, zhTW
 ## X-Website: https://github.com/NoM0Re/DalaranAH
-## X-Curse-Project-ID: 1415402
-## X-Wago-ID: E6gL9DK1
+## X-Curse-Project-ID: 1
+## X-Wago-ID: 1
 
-libs_335.xml
+libs.xml
 locales.xml
 DalaranAH.lua
 Options.lua

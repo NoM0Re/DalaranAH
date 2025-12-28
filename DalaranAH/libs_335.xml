@@ -1,0 +1,11 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="libs_335\LibStub\LibStub.lua"/>
+	<!--Ace3 Block-->
+	<Include file="libs_335\Ace3\AceLocale-3.0\AceLocale-3.0.xml"/>
+	<Include file="libs_335\CallbackHandler-1.0\CallbackHandler-1.0.xml"/>
+	<Script file="libs_335\Ace3\AceAddon-3.0\AceAddon-3.0.lua"/>
+	<Include file="libs_335\Ace3\AceGUI-3.0\AceGUI-3.0.xml"/>
+	<Include file="libs_335\Ace3\AceConfig-3.0\AceConfig-3.0.xml"/>
+	<Script file="libs_335\Ace3\AceConsole-3.0\AceConsole-3.0.lua"/>
+	<!--End Ace3 Block-->
+</Ui>

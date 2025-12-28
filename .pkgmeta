@@ -1,0 +1,39 @@
+package-as: DalaranAH
+
+enable-nolib-creation: no
+
+ignore:
+  - .git
+  - .github
+  - .vscode
+  - README.md
+  - LICENSE
+  - .editorconfig
+  - .gitignore
+  - stylua.toml
+  - Scripts
+  - scripts
+  - workflows
+  - .releases
+  - .pkgmeta
+  - .gitattributes
+  - .luacheckrc
+  - EquippedItemsData
+  - .gitkeep
+
+move-folders:
+  DalaranAH/DalaranAH: DalaranAH
+
+externals:
+  DalaranAH/Libs/Ace3:
+    url: https://repos.curseforge.com/wow/ace3/trunk
+
+  DalaranAH/Libs/CallbackHandler-1.0:
+    url: https://repos.curseforge.com/wow/callbackhandler/trunk/CallbackHandler-1.0
+
+  DalaranAH/Libs/LibStub:
+    url: https://repos.curseforge.com/wow/libstub/trunk
+
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown

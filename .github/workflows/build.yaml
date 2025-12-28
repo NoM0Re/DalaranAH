@@ -1,0 +1,56 @@
+name: Package
+
+on:
+  push:
+    tags:
+      - "test*"
+      - "*.*"
+      - "*.*.*"
+
+jobs:
+  test-build:
+    name: Test build (no upload)
+    if: startsWith(github.ref_name, 'test')
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch all tags
+        run: git fetch --tags --force
+
+      - name: Create package (local only)
+        uses: BigWigsMods/packager@v2
+        env:
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifact (for download)
+        uses: actions/upload-artifact@v4
+        with:
+          name: MerfinPlus-test-build
+          path: .releases/
+
+  release:
+    name: Release build (CurseForge + Wago)
+    if: github.ref_name != '' && !startsWith(github.ref_name, 'test')
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch all tags
+        run: git fetch --tags --force
+
+      - name: Create package and upload
+        uses: BigWigsMods/packager@v2
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+

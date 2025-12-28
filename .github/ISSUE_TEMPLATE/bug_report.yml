@@ -1,0 +1,117 @@
+name: "Bug Report"
+description: Report a problem to help improve DalaranAH
+labels: ["🐛 Bug"]
+
+body:
+- type: checkboxes
+  attributes:
+    label: Is there an existing issue for this bug?
+    description: Please search the existing issues before opening a new one.
+    options:
+      - label: I have searched the existing open and closed issues.
+        required: true
+
+- type: textarea
+  attributes:
+    label: Description
+    description: |
+      What did you expect to happen, and what actually happened?
+  validations:
+    required: true
+
+- type: input
+  attributes:
+    label: DalaranAH Version
+    description: |
+      You can find the version in the addon list or in the `## Version:` field of the DalaranAH.toc file.
+    placeholder: "DalaranAH 1.2.2"
+  validations:
+    required: true
+
+- type: dropdown
+  id: flavor
+  attributes:
+    label: World of Warcraft Client
+    description: Which version of World of Warcraft are you using?
+    options:
+      - Titan Reforged (Wrath Classic)
+      - Wrath of the Lich King (Classic)
+      - Wrath of the Lich King (3.3.5)
+
+  validations:
+    required: true
+
+- type: dropdown
+  id: language
+  attributes:
+    label: World of Warcraft Language
+    description: Which game language are you playing in?
+    options:
+      - enUS
+      - deDE
+      - frFR
+      - esES
+      - esMX
+      - ruRU
+      - zhCN
+      - zhTW
+  validations:
+    required: true
+
+- type: input
+  id: server
+  attributes:
+    label: Server / Realm
+    description: On which server or realm does the issue occur?
+  validations:
+    required: true
+
+- type: checkboxes
+  id: testing
+  attributes:
+    label: Testing Conditions
+    description: To avoid addon conflicts, please confirm your test setup.
+    options:
+      - label: The issue occurs with only DalaranAH enabled
+        required: true
+
+- type: textarea
+  attributes:
+    label: Lua Error (if any)
+    description: |
+      If you encounter Lua errors, please paste them here.
+      Enable error reporting with `/console scriptErrors 1` or use BugSack + BugGrabber.
+    render: Text
+  validations:
+    required: false
+
+- type: textarea
+  attributes:
+    label: Steps to Reproduce
+    description: |
+      Please list the exact steps needed to reproduce the issue.
+    placeholder: |
+      1. Go to Dalaran
+      2. Open the Auction House button
+      3. Click the button
+      4. Observe the issue
+  validations:
+    required: true
+
+- type: input
+  attributes:
+    label: Last Known Working Version
+    description: |
+      If this worked before, which version was the last one that worked correctly?
+    placeholder: "DalaranAH 1.2.1"
+  validations:
+    required: false
+
+- type: textarea
+  attributes:
+    label: Screenshots (optional)
+    description: |
+      Add screenshots if they help explain the problem.
+    placeholder: Use the GitHub editor to attach images.
+  validations:
+    required: false

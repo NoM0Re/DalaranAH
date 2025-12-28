@@ -1,15 +1,10 @@
-# DalaranAH 3.3.5a
+<div align="center">
 
-<img src="https://i.ibb.co/WzPWxH1/Dalaran-AH2.png" alt="Dalaran-AH2" border="0"> <img src="https://i.ibb.co/JKZmkjP/Dalaran-AH.png" alt="Dalaran-AH" border="0"><br/>
+# **DalaranAH**
 
-**DalaranAH** is a lightweight World of Warcraft addon that simplifies interactions with the Auctionhouse NPC in Dalaran by providing a customizable button on your screen, allowing you to target, set focus and mark the AH-Bot.<br/>
-Also it opens the Auctionhouse instant, instead of clicking manually on the Gossip.<br/>
-It provides localization support for multiple languages and is accessible through various slash commands.<br/><br/>
-Addon created by NoM0Re<br/>
-
-[![HitCount](https://hits.dwyl.com/NoM0Re/DalaranAH.svg?style=flat-square)](http://hits.dwyl.com/NoM0Re/DalaranAH) ![GitHub contributors](https://img.shields.io/github/contributors/NoM0Re/DalaranAH)
- ![GitHub issues](https://img.shields.io/github/issues/NoM0Re/DalaranAH)  ![GitHub last commit (branch)](https://img.shields.io/github/last-commit/NoM0Re/DalaranAH/main) <br/>
- <a href='https://github.com/NoM0Re' target="_blank">
+![GitHub contributors](https://img.shields.io/github/contributors/NoM0Re/DalaranAH)
+![GitHub issues](https://img.shields.io/github/issues/NoM0Re/DalaranAH)  ![GitHub last commit (branch)](https://img.shields.io/github/last-commit/NoM0Re/DalaranAH/main)
+<a href='https://github.com/NoM0Re' target="_blank">
   <img alt='GitHub' src='https://img.shields.io/badge/github-100000?style=flat-square&logo=GitHub&logoColor=white&labelColor=black&color=black'/>
 </a>
 <a href='https://www.youtube.com/@xpatrick99x' target="_blank">
@@ -20,31 +15,33 @@ Addon created by NoM0Re<br/>
 </a>
 <a href='https://streamelements.com/noom0re/tip' target="_blank">
   <img alt='PayPal' src='https://img.shields.io/badge/Buy_me a coffee-100000?style=flat-square&logo=PayPal&logoColor=white&labelColor=3b7bbf&color=000000'/>
-</a>
-<br/><br/>
-# **Localisations:**
+</a><br/>
 
-**The Addon needs Localisations in order to work.**<br/>
-**Currently Supported Clients are enUS, enGB, deDE, ruRU, frFR, esES, esMX, zhCN, zhTW**<br/><br/>
-Help me localize ur Client Languague [here](https://github.com/NoM0Re/DalaranAH/pulls)<br/><br/>
+<img src="https://i.ibb.co/1tVwxBfJ/Dalaran-AH.png" alt="Dalaran-AH" border="0" width="219" height="219"> <img src="https://i.ibb.co/JKZmkjP/Dalaran-AH.png" alt="Dalaran-AH" border="0"><br/>
+</div>
+DalaranAH adds a small, movable button to your screen that allows quick interaction with the Engineering Auction House NPC in Dalaran (Wrath of the Lich King 3.3.5a).
 
-# **Usage:**
-<br/>
-When accessing Dalaran's Auction House, the Addon will automatically open.<br/>
-To engage with the Auction House Bot, a left-click will target the NPC.<br/>
-Please note that interacting with the Auction House Bot requires either binding the 'Interact with Target' or 'Interact with Mouseover' bind in the game's keybinds settings.<br/>
-This is the only available method to interact with this NPC.<br/>
-You can easily reposition the GUI by simply holding down the Shift and left-click.<br/>
-<br/>
+The addon targets the Auction House Bot, automatically selects the correct gossip option and lets you open the Auction House using Blizzard’s Interact with Target or Interact with Mouseover keybinds.
 
-# **Slashcommands:**
-  
+Optional features include setting focus and raid markers on the NPC.
+The button only appears while you are in Dalaran and hides automatically when leaving.
+
+Designed to be lightweight, simple and unobtrusive.
+
+# **Features**
+
+- One-click targeting of the Dalaran Auction House Bot
+- Automatic gossip selection
+- Optional focus and raid mark
+- Movable UI button (Shift + Left Click)
+- Multi-language support
+- Wrath of the Lich King (3.3.5a)
+
+# **Slash Commands**
+
 `/dah`, `/dalaranah`
 
-
 # **Installation:**
-1. [Download here](https://github.com/NoM0Re/DalaranAH/archive/refs/heads/main.zip)<br/><br/>
-2. Unzip and take folder **DalaranAH**<br/><br/>
-3. Put it in ur /Interface/Addons folder<br/><br/><br/>
 
-
+1. [Download the package](https://github.com/NoM0Re/DalaranAH/releases).<br/>
+2. Open the archive, extract all folders to Interface\AddOns.
