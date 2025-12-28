@@ -1,6 +1,6 @@
 # WoW Addon Libs ignore
-DalaranAH/Libs/*
-!DalaranAH/Libs/libs.xml
+DalaranAH/libs/*
+!DalaranAH/libs/.gitkeep
 
 # Compiled Lua sources
 luac.out

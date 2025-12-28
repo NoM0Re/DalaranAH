@@ -30,7 +30,7 @@ jobs:
       - name: Upload artifact (for download)
         uses: actions/upload-artifact@v4
         with:
-          name: MerfinPlus-test-build
+          name: DalaranAH-test-build
           path: .releases/
 
   release:

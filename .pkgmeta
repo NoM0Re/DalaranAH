@@ -7,31 +7,28 @@ ignore:
   - .github
   - .vscode
   - README.md
-  - LICENSE
   - .editorconfig
+  - .gitattributes
   - .gitignore
   - stylua.toml
-  - Scripts
-  - scripts
   - workflows
   - .releases
   - .pkgmeta
   - .gitattributes
   - .luacheckrc
-  - EquippedItemsData
   - .gitkeep
 
 move-folders:
   DalaranAH/DalaranAH: DalaranAH
 
 externals:
-  DalaranAH/Libs/Ace3:
+  DalaranAH/libs/Ace3:
     url: https://repos.curseforge.com/wow/ace3/trunk
 
-  DalaranAH/Libs/CallbackHandler-1.0:
+  DalaranAH/libs/CallbackHandler-1.0:
     url: https://repos.curseforge.com/wow/callbackhandler/trunk/CallbackHandler-1.0
 
-  DalaranAH/Libs/LibStub:
+  DalaranAH/libs/LibStub:
     url: https://repos.curseforge.com/wow/libstub/trunk
 
 manual-changelog:

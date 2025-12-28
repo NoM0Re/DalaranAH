@@ -3,7 +3,7 @@
 ## IconTexture: Interface\Icons\Trade_Engineering
 
 ## Author: NoM0Re
-## Version: 1.2.2
+## Version: @project-version@
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 
