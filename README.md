@@ -19,7 +19,7 @@
 
 <img src="https://i.ibb.co/1tVwxBfJ/Dalaran-AH.png" alt="Dalaran-AH" border="0" width="219" height="219"> <img src="https://i.ibb.co/JKZmkjP/Dalaran-AH.png" alt="Dalaran-AH" border="0"><br/>
 </div>
-DalaranAH adds a small, movable button to your screen that allows quick interaction with the Engineering Auction House NPC in Dalaran (Wrath of the Lich King 3.3.5a).
+DalaranAH adds a small, movable button to your screen that allows quick interaction with the Engineering Auction House NPC in Dalaran.
 
 The addon targets the Auction House Bot, automatically selects the correct gossip option and lets you open the Auction House using Blizzard’s Interact with Target or Interact with Mouseover keybinds.
 
@@ -35,7 +35,10 @@ Designed to be lightweight, simple and unobtrusive.
 - Optional focus and raid mark
 - Movable UI button (Shift + Left Click)
 - Multi-language support
-- Wrath of the Lich King (3.3.5a)
+- Multi Expansion support
+   - Titan Reforged
+   - Wrath of the Lich King (Classic)
+   - Wrath of the Lich King (3.3.5a)
 
 # **Slash Commands**
 
