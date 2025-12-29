@@ -8,23 +8,26 @@
 -- This software is licensed under the MIT License.
 
 -- Libs
-local DalaranAH = LibStub("AceAddon-3.0"):NewAddon("DalaranAH", "AceConsole-3.0")
+local DalaranAH = LibStub("AceAddon-3.0"):NewAddon("DalaranAH", "AceConsole-3.0", "AceEvent-3.0")
 local AC = LibStub("AceConfig-3.0")
 local ACD = LibStub("AceConfigDialog-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("DalaranAH")
+--@debug@
+setglobal("DalaranAH", DalaranAH)
+--@end-debug@
 
 -- Check if Libs are loaded
 if not DalaranAH then
-  error("Addon DalaranAH: Missing Crucial Dependency 'LibStub' or 'AceAddon-3.0', Please reinstall the Addon.")
+  error("Addon DalaranAH: Missing Crucial Dependency, Please reinstall the Addon.")
 end
 if not AC then
-  error("Addon DalaranAH: Missing Crucial Dependency 'AceConfig-3.0', Please reinstall the Addon.")
+  error("Addon DalaranAH: Missing Crucial 'AceConfig-3.0' Dependency, Please reinstall the Addon.")
 end
 if not ACD then
-  error("Addon DalaranAH: Missing Crucial Dependency 'AceConfigDialog-3.0', Please reinstall the Addon.")
+  error("Addon DalaranAH: Missing Crucial 'AceConfigDialog-3.0' Dependency, Please reinstall the Addon.")
 end
 if not L then
-  error("Addon DalaranAH: Missing Crucial Dependency 'AceLocale-3.0', Please reinstall the Addon.")
+  error("Addon DalaranAH: Missing Crucial 'AceLocale-3.0' Dependency, Please reinstall the Addon.")
 end
 
 -- WoW API locals
@@ -55,7 +58,6 @@ end
 local DALARAN_MAP_ID = DalaranAH.IsWrathClassic() and 125 or 505
 DalaranAH.AHBotNPCIDA = 35594
 DalaranAH.AHBotNPCIDH = 35607
-DalaranAH.eventsRegistered = false
 DalaranAH.ENGINEERING_GM = 51306
 
 -- Helpers
@@ -220,30 +222,24 @@ function DalaranAH:constructButton()
 end
 
 -- Events
-function DalaranAH:RegisterOurEvents()
-  self.EventFrame:RegisterEvent("ZONE_CHANGED")
-  self.EventFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
-  self.EventFrame:RegisterEvent("GOSSIP_SHOW")
-end
-
-function DalaranAH:UnregisterOurEvents()
-  self.EventFrame:UnregisterEvent("ZONE_CHANGED")
-  self.EventFrame:UnregisterEvent("ZONE_CHANGED_INDOORS")
-  self.EventFrame:UnregisterEvent("GOSSIP_SHOW")
-end
-
 function DalaranAH:ZONE_CHANGED_NEW_AREA()
   if self:IsInDalaran() and self.Init then
-    if not self.eventsRegistered then
-      self:RegisterOurEvents()
-      self.eventsRegistered = true
-    end
+    self:RegisterEvent("ZONE_CHANGED")
+    self:RegisterEvent("ZONE_CHANGED_INDOORS")
+    self:RegisterEvent("GOSSIP_SHOW")
   else
-    if self.eventsRegistered then
-      self:UnregisterOurEvents()
-      self.eventsRegistered = false
-    end
+    self:UnregisterEvent("ZONE_CHANGED")
+    self:UnregisterEvent("ZONE_CHANGED_INDOORS")
+    self:UnregisterEvent("GOSSIP_SHOW")
   end
+end
+
+function DalaranAH:ZONE_CHANGED()
+  self:ButtonHide()
+end
+
+function DalaranAH:ZONE_CHANGED_INDOORS()
+  self:ButtonShow()
 end
 
 function DalaranAH:GOSSIP_SHOW()
@@ -253,43 +249,15 @@ function DalaranAH:GOSSIP_SHOW()
 end
 
 function DalaranAH:SKILL_LINES_CHANGED()
-  if (not self.Init) and self:CheckEngineering() then
+  if not self.Init and self:CheckEngineering() then
     self.Init = true
     self:constructButton()
-    self.EventFrame:UnregisterEvent("SKILL_LINES_CHANGED")
-    self.EventFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+
+    self:UnregisterEvent("SKILL_LINES_CHANGED")
+    self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+
     self:ZONE_CHANGED_NEW_AREA()
     self:ButtonShow()
-  end
-end
-
-local function EventHandler(self, event)
-  if event == "ZONE_CHANGED_NEW_AREA" then
-    DalaranAH:ZONE_CHANGED_NEW_AREA()
-  elseif event == "ZONE_CHANGED_INDOORS" then
-    DalaranAH:ButtonShow()
-  elseif event == "ZONE_CHANGED" then
-    DalaranAH:ButtonHide()
-  elseif event == "GOSSIP_SHOW" then
-    DalaranAH:GOSSIP_SHOW()
-  elseif event == "SKILL_LINES_CHANGED" then
-    DalaranAH:SKILL_LINES_CHANGED()
-  elseif event == "PLAYER_ENTERING_WORLD" then
-    self:UnregisterEvent("PLAYER_ENTERING_WORLD")
-    if C_Timer and C_Timer.After then
-      C_Timer.After(5, function()
-        DalaranAH:PLAYER_ENTERING_WORLD()
-      end)
-    else
-      local f = CreateFrame("Frame")
-      f:SetScript("OnUpdate", function(self, elapsed)
-        self.elapsed = (self.elapsed or 0) + elapsed
-        if self.elapsed < 5 then return end
-        self:SetScript("OnUpdate", nil)
-        self:Hide()
-        DalaranAH:PLAYER_ENTERING_WORLD()
-      end)
-    end
   end
 end
 
@@ -346,12 +314,7 @@ if version == "@project-version@" then
   version = "Dev"
 end
 --@end-debug@
-
 DalaranAH.version = " |c00ffd100DalaranAH " .. version .. "|r"
-
-DalaranAH.EventFrame = CreateFrame("Frame")
-DalaranAH.EventFrame:SetScript("OnEvent", EventHandler)
-DalaranAH.EventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 -- Slash Handler
 function DalaranAH:ChatCommandHandler()
@@ -367,17 +330,36 @@ function DalaranAH:OnInitialize()
 
   self:RegisterChatCommand("dalaranah", "ChatCommandHandler")
   self:RegisterChatCommand("dah", "ChatCommandHandler")
+
+  DalaranAH:RegisterEvent("PLAYER_ENTERING_WORLD")
 end
 
 function DalaranAH:PLAYER_ENTERING_WORLD()
-  if self:CheckEngineering() then
-    self.Init = true
-    self:constructButton()
-    self.EventFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-    self:ZONE_CHANGED_NEW_AREA()
-    self:ButtonShow()
-  else
-    self.EventFrame:RegisterEvent("SKILL_LINES_CHANGED")
+  self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+
+  local function delayedInit()
+    if self:CheckEngineering() then
+      self.Init = true
+      self:constructButton()
+      self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+      self:ZONE_CHANGED_NEW_AREA()
+      self:ButtonShow()
+    else
+      self:RegisterEvent("SKILL_LINES_CHANGED")
+    end
   end
-  self.PLAYER_ENTERING_WORLD = nil
+
+  if C_Timer and C_Timer.After then
+    C_Timer.After(5, delayedInit)
+  else
+    local f, elapsed = CreateFrame("Frame"), 0
+    f:SetScript("OnUpdate", function(_, elaps)
+      elapsed = elapsed + elaps
+      if elapsed < 5 then
+        return
+      end
+      f:SetScript("OnUpdate", nil)
+      delayedInit()
+    end)
+  end
 end
