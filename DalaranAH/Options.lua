@@ -3,11 +3,10 @@ local DalaranAH = LibStub("AceAddon-3.0"):GetAddon("DalaranAH")
 local L = LibStub("AceLocale-3.0"):GetLocale("DalaranAH")
 
 -- WoW Api Functions
-local GetLocale = GetLocale
-local GetBindingKey = GetBindingKey
-local GetCurrentBindingSet = GetCurrentBindingSet
-local SetBinding = SetBinding
-local SaveBindings = SaveBindings
+local GetBindingKey = _G.GetBindingKey
+local GetCurrentBindingSet = _G.GetCurrentBindingSet
+local SetBinding = _G.SetBinding
+local SaveBindings = _G.SaveBindings
 
 -- BlizzOptionsTable
 DalaranAH.resetToDefault = "|c00ffd100DalaranAH|r\n" .. L["Reset all settings to default?"]

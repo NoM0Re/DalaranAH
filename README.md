@@ -2,31 +2,24 @@
 
 # **DalaranAH**
 
-![GitHub contributors](https://img.shields.io/github/contributors/NoM0Re/DalaranAH)
-![GitHub issues](https://img.shields.io/github/issues/NoM0Re/DalaranAH)  ![GitHub last commit (branch)](https://img.shields.io/github/last-commit/NoM0Re/DalaranAH/main)
-<a href='https://github.com/NoM0Re' target="_blank">
-  <img alt='GitHub' src='https://img.shields.io/badge/github-100000?style=flat-square&logo=GitHub&logoColor=white&labelColor=black&color=black'/>
-</a>
-<a href='https://www.youtube.com/@xpatrick99x' target="_blank">
-  <img alt='youtube' src='https://img.shields.io/badge/YouTube-100000?style=flat-square&logo=youtube&logoColor=white&labelColor=FF0000&color=black'/>
-</a>
-<a href='https://www.twitch.tv/noom0re' target="_blank">
-  <img alt='Twitch' src='https://img.shields.io/badge/Twitch-100000?style=flat-square&logo=Twitch&logoColor=white&labelColor=6441a5&color=black'/>
-</a>
-<a href='https://streamelements.com/noom0re/tip' target="_blank">
+[![lint](https://github.com/NoM0Re/DalaranAH/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/NoM0Re/DalaranAH/actions/workflows/lint.yml)
+[![Discord](https://img.shields.io/discord/259362419372064778?style=flat&logo=discord&label=Discord)](https://discord.gg/cghBWHedtf)
+<a href='https://streamelements.com/nom0ree/tip' target="_blank">
   <img alt='PayPal' src='https://img.shields.io/badge/Buy_me a coffee-100000?style=flat-square&logo=PayPal&logoColor=white&labelColor=3b7bbf&color=000000'/>
 </a><br/>
 
 <img src="https://i.ibb.co/1tVwxBfJ/Dalaran-AH.png" alt="Dalaran-AH" border="0" width="219" height="219"> <img src="https://i.ibb.co/JKZmkjP/Dalaran-AH.png" alt="Dalaran-AH" border="0"><br/>
 </div>
-DalaranAH adds a small, movable button to your screen that allows quick interaction with the Engineering Auction House NPC in Dalaran.
 
-The addon targets the Auction House Bot, automatically selects the correct gossip option and lets you open the Auction House using Blizzard’s Interact with Target or Interact with Mouseover keybinds.
+**DalaranAH** adds a small, movable on-screen button for fast interaction with the **Engineering Auction House NPC** in Dalaran.
 
-Optional features include setting focus and raid markers on the NPC.
-The button only appears while you are in Dalaran and hides automatically when leaving.
+When clicked, the addon targets the Auction House bot, opens the Auction House by triggering Blizzard’s **Interact with Target** or **Interact with Mouseover** keybinds, and automatically selects the correct gossip option.
 
-Designed to be lightweight, simple and unobtrusive.
+The button is only visible while inside the Dalaran Auction House and hides automatically when leaving. Events are registered only when needed to keep **CPU and memory usage minimal**.
+
+Optional features include setting **focus** and **raid markers** on the NPC, with configurable keybinds available through the Options UI.
+
+Designed to be **lightweight, simple, and unobtrusive**.
 
 # **Features**
 

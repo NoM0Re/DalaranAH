@@ -30,7 +30,3 @@ externals:
 
   DalaranAH/libs/LibStub:
     url: https://repos.curseforge.com/wow/libstub/trunk
-
-manual-changelog:
-  filename: CHANGELOG.md
-  markup-type: markdown

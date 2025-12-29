@@ -3,18 +3,9 @@
 -- **         https://github.com/NoM0Re/DalaranAH         **
 -- *********************************************************
 --
--- This addon is written and copyrighted by:
--- - NoM0Re
+-- Copyright (c) 2025 NoM0Re
 --
--- The code of this addon is licensed under a Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
---
---  You are free:
---    * to Share - to copy, distribute, display, and perform the work
---    * to Remix - to make derivative works
---  Under the following conditions:
---    * Attribution. You must attribute the work in the manner specified by the author or licensor (but not in any way that suggests that they endorse you or your use of the work).
---    * Noncommercial. You may not use this work for commercial purposes.
---    * Share Alike. If you alter, transform, or build upon this work, you may distribute the resulting work only under the same or similar license to this one.
+-- This software is licensed under the MIT License.
 
 -- Libs
 local DalaranAH = LibStub("AceAddon-3.0"):NewAddon("DalaranAH", "AceConsole-3.0")
@@ -22,7 +13,7 @@ local AC = LibStub("AceConfig-3.0")
 local ACD = LibStub("AceConfigDialog-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("DalaranAH")
 
--- Check if Libs are loaded.
+-- Check if Libs are loaded
 if not DalaranAH then
   error("Addon DalaranAH: Missing Crucial Dependency 'LibStub' or 'AceAddon-3.0', Please reinstall the Addon.")
 end
@@ -38,7 +29,6 @@ end
 
 -- WoW API locals
 local GetBuildInfo = _G.GetBuildInfo
-local GetAddOnMetadata = _G.GetAddOnMetadata
 local UnitFactionGroup = _G.UnitFactionGroup
 local GetScreenWidth = _G.GetScreenWidth
 local GetScreenHeight = _G.GetScreenHeight
@@ -52,7 +42,7 @@ local GameTooltip = _G.GameTooltip
 local SelectGossipOption = _G.SelectGossipOption
 local GetBindingKey = _G.GetBindingKey
 local C_Map = _G.C_Map and _G.C_Map.GetBestMapForUnit or _G.GetCurrentMapAreaID
-local RunNextFrame = _G.RunNextFrame
+local GetAddOnMetadata = _G.C_AddOns and _G.C_AddOns.GetAddOnMetadata or _G.GetAddOnMetadata
 
 -- Flavor detection
 local WrathClassic = not (select(4, GetBuildInfo()) > 30000 and select(4, GetBuildInfo()) <= 30300)
@@ -84,7 +74,7 @@ function DalaranAH:GetFactionNPCNameAndID()
 end
 
 function DalaranAH:CheckEngineering()
-  return IsSpellKnown(DalaranAH.ENGINEERING_GM) or false
+  return IsSpellKnown(self.ENGINEERING_GM) or false
 end
 
 -- Zone
@@ -92,30 +82,15 @@ function DalaranAH:ZoneCheck()
   return tostring(GetMinimapZoneText()) == L["Like Clockwork"]
 end
 
--- Update Tooltip when Button Clicked
-function DalaranAH:UpdateTooltipOnClick()
-  if self.Button:GetScript("OnEnter") then
-    self.Button:GetScript("OnEnter")(self.Button)
-  end
-end
-
 -- Tooltip helpers (ugly asf)
 function DalaranAH:GenerateTooltips()
   local m1, m2 = GetBindingKey("INTERACTMOUSEOVER")
   local t1, t2 = GetBindingKey("INTERACTTARGET")
 
-  if m1 == "" then
-    m1 = nil
-  end
-  if m2 == "" then
-    m2 = nil
-  end
-  if t1 == "" then
-    t1 = nil
-  end
-  if t2 == "" then
-    t2 = nil
-  end
+  m1 = m1 == "" and nil or m1
+  m2 = m2 == "" and nil or m2
+  t1 = t1 == "" and nil or t1
+  t2 = t2 == "" and nil or t2
 
   local function fmt(a, b, s)
     return a and b and (L["Press "] .. a .. L[" or "] .. b .. s) or (a or b) and (L["Press "] .. (a or b) .. s)
@@ -216,7 +191,7 @@ function DalaranAH:constructButton()
     GameTooltip:Hide()
   end)
   btn:SetScript("OnMouseUp", function(self)
-    DalaranAH:UpdateTooltipOnClick()
+    self:GetScript("OnEnter")(self)
   end)
   -- Dragging
   btn:RegisterForDrag("LeftButton")
@@ -307,7 +282,9 @@ local function EventHandler(self, event)
       end)
     else
       local f = CreateFrame("Frame")
-      f:SetScript("OnUpdate", function(self)
+      f:SetScript("OnUpdate", function(self, elapsed)
+        self.elapsed = (self.elapsed or 0) + elapsed
+        if self.elapsed < 5 then return end
         self:SetScript("OnUpdate", nil)
         self:Hide()
         DalaranAH:PLAYER_ENTERING_WORLD()
@@ -363,7 +340,14 @@ function DalaranAH:ResetToDefaults()
 end
 
 -- Init
-DalaranAH.version = " |c00ffd100DalaranAH v" .. GetAddOnMetadata("DalaranAH", "Version") .. "|r"
+local version = GetAddOnMetadata("DalaranAH", "Version")
+--@debug@
+if version == "@project-version@" then
+  version = "Dev"
+end
+--@end-debug@
+
+DalaranAH.version = " |c00ffd100DalaranAH " .. version .. "|r"
 
 DalaranAH.EventFrame = CreateFrame("Frame")
 DalaranAH.EventFrame:SetScript("OnEvent", EventHandler)
@@ -395,5 +379,5 @@ function DalaranAH:PLAYER_ENTERING_WORLD()
   else
     self.EventFrame:RegisterEvent("SKILL_LINES_CHANGED")
   end
-  DalaranAH.PLAYER_ENTERING_WORLD = nil
+  self.PLAYER_ENTERING_WORLD = nil
 end
