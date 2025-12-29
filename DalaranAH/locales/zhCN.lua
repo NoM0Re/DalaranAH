@@ -3,7 +3,7 @@ if not L then
   return
 end
 
-L["Like Clockwork"] = "精密如钟表"
+L["Like Clockwork"] = "精密仪器"
 L["Brassbolt Mechawrench"] = "布拉斯博特·机钳"
 L["Reginald Arcfire"] = "雷加纳德·弧炎"
 L["Left-click to target"] = "左键点击以选中目标"
