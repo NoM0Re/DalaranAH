@@ -1,41 +1,14 @@
-name: Package
+name: Release Package
 
 on:
   push:
     tags:
-      - "test*"
       - "*.*"
       - "*.*.*"
 
 jobs:
-  test-build:
-    name: Test build (no upload)
-    if: startsWith(github.ref_name, 'test')
-    runs-on: ubuntu-22.04
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Fetch all tags
-        run: git fetch --tags --force
-
-      - name: Create package (local only)
-        uses: BigWigsMods/packager@v2
-        env:
-          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload artifact (for download)
-        uses: actions/upload-artifact@v4
-        with:
-          name: DalaranAH-test-build
-          path: .releases/
-
   release:
-    name: Release build (CurseForge + Wago)
-    if: github.ref_name != '' && !startsWith(github.ref_name, 'test')
+    name: Build & Publish Release
     runs-on: ubuntu-22.04
 
     steps:
@@ -44,13 +17,26 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Fetch all tags
+      - name: Fetch tags
         run: git fetch --tags --force
 
-      - name: Create package and upload
+      - name: Build package & publish to CurseForge / Wago / GitHub
         uses: BigWigsMods/packager@v2
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Create stable GitHub asset (DalaranAH.zip)
+        run: |
+          cd .releases
+          FILE="DalaranAH-${GITHUB_REF_NAME}.zip"
+          cp "$FILE" DalaranAH.zip
+
+      - name: Upload stable GitHub asset
+        uses: softprops/action-gh-release@v2.5.0
+        with:
+          files: .releases/DalaranAH.zip
+          overwrite: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
