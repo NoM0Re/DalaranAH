@@ -20,23 +20,17 @@ jobs:
       - name: Fetch tags
         run: git fetch --tags --force
 
-      - name: Build package & publish to CurseForge / Wago / GitHub
+      - name: Build package & publish to CurseForge / Wago
         uses: BigWigsMods/packager@v2
+        with:
+          args: -g "3.3.5,3.4.5,3.8.0"
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
-          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create stable GitHub asset (DalaranAH.zip)
-        run: |
-          cd .releases
-          FILE="DalaranAH-${GITHUB_REF_NAME}.zip"
-          cp "$FILE" DalaranAH.zip
-
-      - name: Upload stable GitHub asset
-        uses: softprops/action-gh-release@v2.5.0
+      - name: Build package & publish to Github Releases
+        uses: BigWigsMods/packager@v2
         with:
-          files: .releases/DalaranAH.zip
-          overwrite: true
+          args: -g "3.3.5,3.4.5,3.8.0" -n "{package-name}"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
