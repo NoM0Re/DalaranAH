@@ -1,0 +1,33 @@
+name: TOC Bump
+
+on:
+  schedule:
+    - cron: "0 12 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone project
+        uses: actions/checkout@v6
+
+      - name: Update TOC Interface version
+        uses: p3lim/toc-interface-updater@v4
+        with:
+          flavor: wrath
+          beta: true
+          ptr: true
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          title: TOC Bump
+          commit-message: TOC Bump
+          branch: toc-bump
+          delete-branch: true
