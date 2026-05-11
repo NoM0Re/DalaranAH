@@ -1,4 +1,4 @@
-## Interface: 30300
+## Interface: 120005, 120007
 ## Title: DalaranAH
 ## IconTexture: Interface\Icons\Trade_Engineering
 
