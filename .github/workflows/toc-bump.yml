@@ -20,7 +20,8 @@ jobs:
       - name: Update TOC Interface version
         uses: p3lim/toc-interface-updater@v4
         with:
-          flavor: titan
+          flavor: |
+            wrath
           beta: true
           ptr: true
 
