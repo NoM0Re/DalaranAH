@@ -12,9 +12,6 @@ local DalaranAH = LibStub("AceAddon-3.0"):NewAddon("DalaranAH", "AceConsole-3.0"
 local AC = LibStub("AceConfig-3.0")
 local ACD = LibStub("AceConfigDialog-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("DalaranAH")
---@debug@
-setglobal("DalaranAH", DalaranAH)
---@end-debug@
 
 -- Check if Libs are loaded
 if not DalaranAH then
@@ -59,6 +56,7 @@ local DALARAN_MAP_ID = DalaranAH.IsWrathClassic() and 125 or 505
 DalaranAH.AHBotNPCIDA = 35594
 DalaranAH.AHBotNPCIDH = 35607
 DalaranAH.ENGINEERING_GM = 51306
+local defaults = { size = 70, mark = false, focus = false, raidmark = 6 }
 
 -- Helpers
 function DalaranAH:IsInDalaran()
@@ -84,41 +82,82 @@ function DalaranAH:ZoneCheck()
   return tostring(GetMinimapZoneText()) == L["Like Clockwork"]
 end
 
--- Tooltip helpers (ugly asf)
+-- Tooltip helpers
+local function bindingTooltip(action, suffix, fallback)
+  local first, second = GetBindingKey(action)
+  if first == "" then
+    first = nil
+  end
+  if second == "" then
+    second = nil
+  end
+  if first and second then
+    return L["Press "] .. first .. L[" or "] .. second .. suffix
+  end
+  if first or second then
+    return L["Press "] .. (first or second) .. suffix
+  end
+  return fallback
+end
+
 function DalaranAH:GenerateTooltips()
-  local m1, m2 = GetBindingKey("INTERACTMOUSEOVER")
-  local t1, t2 = GetBindingKey("INTERACTTARGET")
-
-  m1 = m1 == "" and nil or m1
-  m2 = m2 == "" and nil or m2
-  t1 = t1 == "" and nil or t1
-  t2 = t2 == "" and nil or t2
-
-  local function fmt(a, b, s)
-    return a and b and (L["Press "] .. a .. L[" or "] .. b .. s) or (a or b) and (L["Press "] .. (a or b) .. s)
-  end
-
-  local tt = fmt(t1, t2, L[" to interact with Target"])
-  local tm = fmt(m1, m2, L[" to interact with Mouseover"])
-
-  return tt or tm and tt,
-    tm or tt and tm or L["Bind 'Interact with Target' to interact with the Target"],
-    L["Bind 'Interact with Mouseover' to interact with the Mouseover"]
+  return bindingTooltip(
+    "INTERACTTARGET",
+    L[" to interact with Target"],
+    L["Bind 'Interact with Target' to interact with the Target"]
+  ),
+    bindingTooltip(
+      "INTERACTMOUSEOVER",
+      L[" to interact with Mouseover"],
+      L["Bind 'Interact with Mouseover' to interact with the Mouseover"]
+    )
 end
 
--- Button visibility
-function DalaranAH:ButtonShow()
-  if self:ZoneCheck() and self.Button and self.Model then
-    self.Model:SetCreature(self.NPCID)
-    self.Button:Show()
-    self.Model:SetCamera(0)
+function DalaranAH:UpdateVisibility()
+  if not self.Button then
+    return
   end
-end
-
-function DalaranAH:ButtonHide()
-  if (not self:ZoneCheck()) and self.Button then
+  if InCombatLockdown() then
+    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+    return
+  end
+  if self:IsInDalaran() and self:ZoneCheck() then
+    if not self.Button:IsShown() then
+      self.Model:SetCreature(self.NPCID)
+      self.Button:Show()
+      self.Model:SetCamera(0)
+    end
+  else
     self.Button:Hide()
   end
+end
+
+function DalaranAH:ApplyButtonSettings()
+  if not self.Button then
+    return
+  end
+  if InCombatLockdown() then
+    self.settingsPending = true
+    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+    return
+  end
+  self.settingsPending = nil
+  self.Button:SetSize(self.db.size, self.db.size)
+  self.Button:ClearAllPoints()
+  self.Button:SetPoint("BOTTOMLEFT", self.db.x, self.db.y)
+  self.Button:SetAttribute("macrotext", self:setMacroText(self.db.mark, self.db.focus))
+end
+
+function DalaranAH:PLAYER_REGEN_ENABLED()
+  self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+  if not self.Init then
+    self:TryInitializeButton()
+    return
+  end
+  if self.settingsPending then
+    self:ApplyButtonSettings()
+  end
+  self:UpdateVisibility()
 end
 
 -- Macro
@@ -147,7 +186,7 @@ function DalaranAH:constructButton()
   local btn = CreateFrame("Button", "DalaranAHButton", UIParent, templates)
   self.Button = btn
 
-  btn:SetSize(self.ButtonSize, self.ButtonSize)
+  btn:SetSize(self.db.size, self.db.size)
   btn:SetPoint("BOTTOMLEFT", self.db.x, self.db.y)
   btn:SetFrameStrata("HIGH")
   btn:SetMovable(true)
@@ -232,14 +271,15 @@ function DalaranAH:ZONE_CHANGED_NEW_AREA()
     self:UnregisterEvent("ZONE_CHANGED_INDOORS")
     self:UnregisterEvent("GOSSIP_SHOW")
   end
+  self:UpdateVisibility()
 end
 
 function DalaranAH:ZONE_CHANGED()
-  self:ButtonHide()
+  self:UpdateVisibility()
 end
 
 function DalaranAH:ZONE_CHANGED_INDOORS()
-  self:ButtonShow()
+  self:UpdateVisibility()
 end
 
 function DalaranAH:GOSSIP_SHOW()
@@ -249,16 +289,26 @@ function DalaranAH:GOSSIP_SHOW()
 end
 
 function DalaranAH:SKILL_LINES_CHANGED()
-  if not self.Init and self:CheckEngineering() then
-    self.Init = true
-    self:constructButton()
+  self:TryInitializeButton()
+end
 
-    self:UnregisterEvent("SKILL_LINES_CHANGED")
-    self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-
-    self:ZONE_CHANGED_NEW_AREA()
-    self:ButtonShow()
+function DalaranAH:TryInitializeButton()
+  if self.Init then
+    return
   end
+  if not self:CheckEngineering() then
+    self:RegisterEvent("SKILL_LINES_CHANGED")
+    return
+  end
+  if InCombatLockdown() then
+    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+    return
+  end
+  self:constructButton()
+  self.Init = true
+  self:UnregisterEvent("SKILL_LINES_CHANGED")
+  self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+  self:ZONE_CHANGED_NEW_AREA()
 end
 
 -- SavedVariables
@@ -267,53 +317,27 @@ function DalaranAH:InitializeSavedVariables()
     DalaranAHDB = {}
   end
   self.db = DalaranAHDB
-
-  self.db.size = self.db.size or 70
-  self.db.mark = self.db.mark or false
-  self.db.focus = self.db.focus or false
-  self.db.raidmark = self.db.raidmark or 6
-
-  self.ButtonSize = self.db.size
-
-  local cx = GetScreenWidth() / 2
-  local cy = GetScreenHeight() / 2
-  self.db.x = self.db.x or (cx - self.ButtonSize / 2)
-  self.db.y = self.db.y or (cy - self.ButtonSize / 2)
+  for key, value in pairs(defaults) do
+    if self.db[key] == nil then
+      self.db[key] = value
+    end
+  end
+  self.db.x = self.db.x or ((GetScreenWidth() - self.db.size) / 2)
+  self.db.y = self.db.y or ((GetScreenHeight() - self.db.size) / 2)
 end
 
 function DalaranAH:ResetToDefaults()
-  if not DalaranAHDB then
-    DalaranAHDB = {}
+  self:InitializeSavedVariables()
+  for key, value in pairs(defaults) do
+    self.db[key] = value
   end
-  self.db = DalaranAHDB
-
-  self.db.size = 70
-  self.db.mark = false
-  self.db.focus = false
-  self.db.raidmark = 6
-
-  self.ButtonSize = self.db.size
-
-  local cx = GetScreenWidth() / 2
-  local cy = GetScreenHeight() / 2
-  self.db.x = cx - self.ButtonSize / 2
-  self.db.y = cy - self.ButtonSize / 2
-  -- Apply Changes
-  if self.Button then
-    self.Button:SetSize(self.ButtonSize, self.ButtonSize)
-    self.Button:ClearAllPoints()
-    self.Button:SetPoint("BOTTOMLEFT", self.db.x, self.db.y)
-    self.Button:SetAttribute("macrotext", self:setMacroText(self.db.mark, self.db.focus))
-  end
+  self.db.x = (GetScreenWidth() - self.db.size) / 2
+  self.db.y = (GetScreenHeight() - self.db.size) / 2
+  self:ApplyButtonSettings()
 end
 
 -- Init
 local version = GetAddOnMetadata("DalaranAH", "Version")
---@debug@
-if version == "@project-version@" then
-  version = "Dev"
-end
---@end-debug@
 DalaranAH.version = " |c00ffd100DalaranAH " .. version .. "|r"
 
 -- Slash Handler
@@ -338,15 +362,7 @@ function DalaranAH:PLAYER_ENTERING_WORLD()
   self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 
   local function delayedInit()
-    if self:CheckEngineering() then
-      self.Init = true
-      self:constructButton()
-      self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-      self:ZONE_CHANGED_NEW_AREA()
-      self:ButtonShow()
-    else
-      self:RegisterEvent("SKILL_LINES_CHANGED")
-    end
+    self:TryInitializeButton()
   end
 
   if C_Timer and C_Timer.After then

@@ -56,9 +56,7 @@ DalaranAH.options = {
       end,
       set = function(i, val)
         DalaranAH.db[i[#i]] = val
-        if DalaranAH.Button then
-          DalaranAH.Button:SetSize(val, val)
-        end
+        DalaranAH:ApplyButtonSettings()
       end,
     },
     spacer = {
@@ -82,9 +80,7 @@ DalaranAH.options = {
       end,
       set = function(i, val)
         DalaranAH.db[i[#i]] = val
-        if DalaranAH.Button then
-          DalaranAH.Button:SetAttribute("macrotext", DalaranAH:setMacroText(DalaranAH.db.mark, DalaranAH.db.focus))
-        end
+        DalaranAH:ApplyButtonSettings()
       end,
       width = 1.2,
     },
@@ -107,9 +103,7 @@ DalaranAH.options = {
       end,
       set = function(i, val)
         DalaranAH.db[i[#i]] = tonumber(val)
-        if DalaranAH.Button then
-          DalaranAH.Button:SetAttribute("macrotext", DalaranAH:setMacroText(DalaranAH.db.mark, DalaranAH.db.focus))
-        end
+        DalaranAH:ApplyButtonSettings()
       end,
     },
     focus = {
@@ -123,9 +117,7 @@ DalaranAH.options = {
       end,
       set = function(i, val)
         DalaranAH.db[i[#i]] = val
-        if DalaranAH.Button then
-          DalaranAH.Button:SetAttribute("macrotext", DalaranAH:setMacroText(DalaranAH.db.mark, DalaranAH.db.focus))
-        end
+        DalaranAH:ApplyButtonSettings()
       end,
     },
     spacer1 = {

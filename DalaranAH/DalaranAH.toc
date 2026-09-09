@@ -3,11 +3,11 @@
 ## IconTexture: Interface\Icons\Trade_Engineering
 
 ## Author: NoM0Re
-## Version: @project-version@
+## Version: 1.3.1
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 
-## Notes-enUS: Engineering Auction House Button for Dalaran
+## Notes-enUS: Dalaran Engineering Auction House Button
 ## Notes-deDE: Auktionshaus-Schaltfläche für Ingenieure in Dalaran
 ## Notes-frFR: Bouton d’hôtel des ventes d’ingénierie pour Dalaran
 ## Notes-esES: Botón de casa de subastas de ingeniería para Dalaran

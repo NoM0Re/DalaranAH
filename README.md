@@ -13,7 +13,7 @@
 
 **DalaranAH** adds a small, movable on-screen button for fast interaction with the **Engineering Auction House NPC** in Dalaran.
 
-When clicked, the addon targets the Auction House bot, opens the Auction House by triggering Blizzard’s **Interact with Target** or **Interact with Mouseover** keybinds, and automatically selects the correct gossip option.
+Click the button to target the Auction House NPC, then press your **Interact with Target** keybind to interact. The addon automatically selects the first gossip option for that NPC. You can configure both **Interact with Target** and **Interact with Mouseover** keybinds in the Options UI.
 
 The button is only visible while inside the Dalaran Auction House and hides automatically when leaving. Events are registered only when needed to keep **CPU and memory usage minimal**.
 
