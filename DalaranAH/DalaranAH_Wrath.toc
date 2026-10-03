@@ -1,4 +1,5 @@
 ## Interface: 38002
+# WOW_INTERFACE_TARGETS: wrath-titan
 ## Title: DalaranAH
 ## IconTexture: Interface\Icons\Trade_Engineering
 

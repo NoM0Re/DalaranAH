@@ -15,20 +15,22 @@ jobs:
 
     steps:
       - name: Clone project
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Update TOC Interface version
-        uses: p3lim/toc-interface-updater@v4
+        id: toc
+        uses: Nnoggie/wow-interface-updater@301fd537df6485cae5e20c4a28ddd42d9f48cd36 # v1.2.0
         with:
-          flavor: |
-            wrath
-          beta: true
-          ptr: true
+          toc-glob: DalaranAH/DalaranAH_Wrath.toc
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v8
+        if: steps.toc.outputs.changed == 'true'
         with:
           title: TOC Bump
           commit-message: TOC Bump
+          body: ${{ steps.toc.outputs.pr-body }}
           branch: toc-bump
           delete-branch: true
